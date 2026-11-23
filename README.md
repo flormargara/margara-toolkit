@@ -22,6 +22,7 @@ adapters/
   mllc/         catálogo de golden rules para ai-mllc
   AGENTS.md     punto de entrada común para cualquier herramienta
 scripts/        instalación y utilidades del propio toolkit
+tests/          tests de los chequeos (unittest, datos sintéticos)
 docs/           decisiones y su porqué
 ```
 
@@ -66,6 +67,14 @@ Skills en `adapters/claude/skills/`: `ml-practices`, `credit-scoring-ml`, `colle
 - Nunca pisa carpetas reales. `./scripts/install.sh --uninstall` quita solo los enlaces que apuntan a este repo.
 
 Los hooks no se instalan solos: copiar el bloque que corresponda de `adapters/claude/settings.example.json` al `settings.json` del proyecto donde se quieran.
+
+## Tests
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+Cada chequeo tiene al menos un caso que pasa y uno que falla, con datos sintéticos generados dentro del test. Solo usan la biblioteca estándar, como los chequeos. Un chequeo nuevo entra con sus tests.
 
 ## Uso en un proyecto
 

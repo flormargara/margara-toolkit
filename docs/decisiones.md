@@ -2,6 +2,14 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-23 — Tests de los chequeos
+
+**Decisión:** sumar `tests/` con `unittest`, un archivo por dominio, que corre cada chequeo como un usuario (subproceso) y verifica el código de salida y el mensaje.
+
+**Por qué:** los chequeos son la garantía del toolkit; si un cambio rompe uno, tiene que notarse antes de usarlo en un proyecto. Se prueba el contrato de línea de comandos y no las funciones internas, para poder reescribir un script sin reescribir sus tests.
+
+**Sin dependencias:** `unittest` en lugar de `pytest`, porque los chequeos corren con la biblioteca estándar y los tests también tienen que correr en cualquier entorno. Los datos sintéticos se generan con semilla fija dentro de cada test; ningún dato real entra al repo.
+
 ## 2026-11-23 — Chequeos propios de crédito y cobranzas
 
 **Decisión:** sumar tres chequeos a `credit-scoring/checks/` (`roll_rate.py`, `check_woe_bins.py`, `check_ratings.py`) y dos a `collections/checks/` (`check_training_population.py`, `check_control_group.py`).
