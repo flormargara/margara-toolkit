@@ -1,0 +1,24 @@
+# Configuración local y secretos
+settings.local.json
+.env
+.env.*
+*.pem
+*.key
+credentials*.json
+
+# Datos: nunca datos reales en este repo
+*.csv
+*.parquet
+*.xlsx
+*.pkl
+*.joblib
+data/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Sistema
+.DS_Store

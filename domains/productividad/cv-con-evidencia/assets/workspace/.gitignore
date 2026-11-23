@@ -1,0 +1,4 @@
+# Este espacio contiene datos personales. Compartir solo archivos seleccionados.
+.venv/
+__pycache__/
+*.pyc

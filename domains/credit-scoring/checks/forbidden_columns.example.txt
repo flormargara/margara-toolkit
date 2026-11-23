@@ -1,0 +1,33 @@
+# Patrones de columnas prohibidas como features (expresiones regulares, una por línea).
+# Copiar como forbidden_columns.txt en la raíz de cada proyecto y ajustar a sus nombres reales.
+# Se comparan sin distinguir mayúsculas/minúsculas contra nombres de columnas y código.
+#
+# Para permitir un uso legítimo (por ejemplo, la construcción del target), agregar
+# el comentario "leakage-ok" en esa misma línea del código.
+
+# Desempeño del propio préstamo (posterior a la decisión)
+\bmora\w*
+\batraso\w*
+\bdias?_(de_)?(atraso|mora|vencid\w*)
+\bdpd\w*
+\bmax_dpd\w*
+\bcastig\w*
+\bwrite_?off\w*
+\bcharge_?off\w*
+\bestado_final\w*
+\bsaldo_vencido\w*
+\brefinanci\w*
+\bcobranza\w*
+\brecupero\w*
+
+# Variables de proceso (consecuencia de la decisión)
+\bfecha_desembolso\w*
+\bmonto_aprobado\w*
+\bmonto_desembolsado\w*
+\boferta_final\w*
+\bdecision_final\w*
+\banalista\w*
+
+# Target y derivados
+\btarget\w*_(mean|enc\w*)
+\bflag_default\w*

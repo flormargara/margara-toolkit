@@ -1,0 +1,28 @@
+---
+description: Metodología y guardrails para construir, validar y documentar scores de riesgo crediticio (target de default, particiones out-of-time, leakage, WoE/IV, calibración, PSI, sesgo de selección).
+globs: ["**/*.py", "**/*.ipynb", "**/*.sql"]
+alwaysApply: false
+---
+
+# Scores de riesgo crediticio
+
+## Reglas que no se negocian
+
+- La validación final es out-of-time. Un split aleatorio solo sirve para tunear hiperparámetros.
+- Ninguna variable posterior al punto de decisión: desempeño del propio préstamo (mora, atraso, castigo, refinanciación) ni variables de proceso (fecha o monto de desembolso, oferta final, analista).
+- Binning, WoE, imputación, escalado y selección de variables se ajustan solo con train.
+- La misma persona nunca aparece en dos particiones; sin cohortes inmaduras.
+- El OOT se mira una sola vez, al final.
+- Siempre hay un baseline de regresión logística sobre WoE.
+- AUC > 0.90 o IV > 0.5 en una variable se tratan como sospecha de leakage.
+- Sin variables sensibles como features; revisar proxies.
+- El punto de corte lo decide el dueño del riesgo; el modelo entrega la tabla de opciones.
+
+## Chequeos
+
+- Leakage: `python3 ~/projects/margara-toolkit/domains/credit-scoring/checks/check_leakage.py --features <lista.txt>` (usa `forbidden_columns.txt` de la raíz del proyecto).
+- PSI/CSI: `python3 ~/projects/margara-toolkit/domains/credit-scoring/checks/psi.py ref.csv act.csv --column score`.
+
+## Referencias
+
+Metodología completa por etapa en `~/projects/margara-toolkit/domains/credit-scoring/knowledge/` (00-flujo.md es el índice). Plantillas de ficha del modelo y checklist en `.../credit-scoring/templates/`.

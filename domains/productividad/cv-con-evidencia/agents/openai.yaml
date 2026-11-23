@@ -1,0 +1,4 @@
+interface:
+  display_name: "CV con evidencia"
+  short_description: "Armá tu perfil y adaptá CVs con hechos confirmados"
+  default_prompt: "Usá $cv-con-evidencia para armar mi KB y preparar una candidatura basada en mi experiencia confirmada."
