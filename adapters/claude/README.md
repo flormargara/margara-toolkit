@@ -17,8 +17,8 @@ Cada carpeta de `skills/` contiene solo su `SKILL.md`. El resto son enlaces simb
 | Skill | Enlaces |
 |---|---|
 | `ml-practices` | `ml-foundations/` → dominio genérico de ML; `shared/` → flujo de trabajo con agentes |
-| `credit-scoring-ml` | `references/` → conocimiento de crédito; `templates/`; `patterns/` → lista de leakage de crédito; `ml-foundations/`; `shared/` |
-| `collections-ml` | `references/` → conocimiento de cobranzas; `templates/`; `credit-scoring/` → dominio de crédito; `ml-foundations/` |
+| `credit-scoring-ml` | `references/` → conocimiento de crédito; `templates/`; `checks/` → chequeos y lista de leakage de crédito; `ml-foundations/`; `shared/` |
+| `collections-ml` | `references/` → conocimiento de cobranzas; `templates/`; `checks/` → chequeos de cobranzas; `credit-scoring/` → dominio de crédito; `ml-foundations/` |
 | `cv-con-evidencia` | La carpeta completa de `domains/productividad/cv-con-evidencia` |
 
 ## El hook de leakage

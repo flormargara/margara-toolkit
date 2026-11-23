@@ -41,6 +41,7 @@ Además de lo anterior, seguir `domains/credit-scoring/knowledge/00-flujo.md`, q
 - Baselines de regresión logística sobre WoE y de la política vigente.
 - Score registrado para todos los solicitantes, incluidos los rechazados por reglas.
 - Ratings validados con error de calibración acotado; el corte lo decide el dueño del riesgo.
+- Chequeos de crédito en `domains/credit-scoring/checks/`: `roll_rate.py --bad-from <tramo>` al definir el default, `check_woe_bins.py` sobre la tabla de binning y `check_ratings.py` sobre la muestra donde se verifican los cortes.
 - Lista de leakage de crédito: `domains/credit-scoring/checks/forbidden_columns.example.txt`.
 - Plantillas de crédito: `domains/credit-scoring/templates/`.
 
@@ -48,7 +49,7 @@ Además de lo anterior, seguir `domains/credit-scoring/knowledge/00-flujo.md`, q
 
 Además de ML y crédito, seguir `domains/collections/knowledge/`:
 
-- El modelo se entrena y evalúa solo con el grupo de control.
+- El modelo se entrena y evalúa solo con el grupo de control: `domains/collections/checks/check_training_population.py` en verde, y `check_control_group.py` sobre el registro de asignaciones.
 - Gestiones, contactos y promesas del episodio actual de mora son leakage.
 - Discriminación (sobre control) e impacto (tratamiento vs. control) se reportan por separado.
 - Empezar por `domains/collections/templates/problem-framing.md`.

@@ -38,4 +38,12 @@ Todas las de la skill `ml-practices`, y además:
 
 ## Chequeos
 
-`ml-foundations/checks/check_universe.py`, `check_leakage.py`, `check_concentration.py` y `psi.py`, con la lista de patrones de `credit-scoring/checks/forbidden_columns.example.txt`. Ver `references/02-chequeos.md`.
+Propios de cobranzas, en `checks/`:
+
+| Chequeo | Uso |
+|---|---|
+| Entrenamiento solo con control | `python3 checks/check_training_population.py universo.csv --model-start AAAA-MM-DD` (con `--target-kind autocura` si el target es autocura) |
+| Grupo de control | `python3 checks/check_control_group.py asignaciones.csv --expected A=0.03,B=0.05,C=0.08 --target-col <target> --min-control-events <n>`: persistencia, proporción por rating y tamaño para reentrenar |
+| Ratings sobre control | `python3 credit-scoring/checks/check_ratings.py control.csv --order ... --expected ... --where grupo=control` |
+
+Además, los genéricos de `ml-foundations/checks/` (`check_universe.py`, `check_dataset.py`, `check_leakage.py`, `check_concentration.py`, `psi.py`), con la lista de patrones de `credit-scoring/checks/forbidden_columns.example.txt`. Ver `references/02-chequeos.md`.

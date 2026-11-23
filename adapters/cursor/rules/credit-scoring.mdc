@@ -21,6 +21,17 @@ Aplican todas las reglas de `ml-foundations.mdc`. Además:
 - El punto de corte lo decide el dueño del riesgo.
 - En cobranzas, el modelo se entrena y evalúa solo con el grupo de control.
 
+## Chequeos
+
+En `~/projects/margara-toolkit/domains/credit-scoring/checks/`:
+- Definición de malo: `python3 roll_rate.py historia.csv --id-col <cuenta> --period-col <mes> --dpd-col <días> --bad-from <tramo>`
+- Binning: `python3 check_woe_bins.py binning.csv`
+- Ratings: `python3 check_ratings.py oot.csv --order A,B,C,D,E --expected A=0.01,... --score-col score`
+
+En `~/projects/margara-toolkit/domains/collections/checks/`:
+- Entrenamiento solo con control: `python3 check_training_population.py universo.csv --model-start AAAA-MM-DD`
+- Grupo de control: `python3 check_control_group.py asignaciones.csv --expected A=0.03,B=0.05,C=0.08`
+
 ## Leakage
 
 Lista de patrones de crédito y cobranzas: `~/projects/margara-toolkit/domains/credit-scoring/checks/forbidden_columns.example.txt`. Combinarla con la genérica en el `forbidden_columns.txt` del proyecto.

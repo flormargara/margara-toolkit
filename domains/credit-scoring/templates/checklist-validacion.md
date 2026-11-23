@@ -11,7 +11,7 @@ Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y es
 ## Problema y target
 - [ ] Decisión, población, punto de decisión y criterio de scoreabilidad escritos
 - [ ] Forma de medir el impacto definida (grupo de control o comparación contra la política vigente)
-- [ ] Evento de default justificado con análisis de roll rate
+- [ ] Evento de default justificado con análisis de roll rate (`roll_rate.py --bad-from` sin FAIL; advertencias justificadas)
 - [ ] Evento de default, ventana de desempeño y regla de peor estado definidos y acordados con riesgo
 - [ ] Tratamiento de refinanciaciones, reestructuraciones y renovaciones definido
 - [ ] Umbral de monto mínimo para "malo" definido (o justificado que no hace falta)
@@ -25,6 +25,7 @@ Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y es
 - [ ] Elegibilidad idéntica en train, validación y scoring
 - [ ] `check_universe.py` en verde (orden, horizonte, madurez, entidades, duplicados)
 - [ ] Split por persona / grupo (sin la misma unidad en dos particiones de la búsqueda); validación final reportada completa y sin personas vistas
+- [ ] `check_woe_bins.py` en verde sobre la tabla de binning (excepciones justificadas por escrito)
 - [ ] Transformaciones (binning, WoE, imputación, escalado, selección) y sampling ajustados solo con train
 - [ ] Early stopping y búsqueda de hiperparámetros sin usar el conjunto del veredicto
 - [ ] OOT mirado una sola vez, al final
@@ -51,7 +52,8 @@ Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y es
 - [ ] Población de entrenamiento vs. de predicción comparada (validación adversarial si difieren)
 
 ## Ratings
-- [ ] Bandas monótonas, con participación mínima y tasas distinguibles
+- [ ] `check_ratings.py` en verde sobre la muestra de verificación (monotonía, participación mínima, calibración, cortes)
+- [ ] Tasas de bandas contiguas distinguibles
 - [ ] Cortes verificados en una segunda muestra y estresados
 - [ ] Error de calibración por rating dentro del margen acordado
 

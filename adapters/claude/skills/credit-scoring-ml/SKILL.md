@@ -45,12 +45,15 @@ Cuando una regla impide lo que se pidió, decirlo explícitamente. Cuando la doc
 
 ## Chequeos ejecutables
 
-Los chequeos están en `ml-foundations/checks/`. La lista de patrones de leakage de crédito y cobranzas está en `patterns/forbidden_columns.example.txt`.
+Los chequeos genéricos están en `ml-foundations/checks/` y los de crédito en `checks/`, junto con la lista de patrones de leakage de crédito y cobranzas (`checks/forbidden_columns.example.txt`).
 
 | Chequeo | Uso |
 |---|---|
+| Definición de malo | `python3 checks/roll_rate.py historia.csv --id-col <cuenta> --period-col <mes> --dpd-col <días de atraso> --bad-from <tramo propuesto>`: matriz de transición, peor tramo → default y veredicto sobre la definición |
 | Integridad del universo | `python3 ml-foundations/checks/check_universe.py universo.csv --horizon-days <ventana en días> --last-data-date AAAA-MM-DD --id-col <id>` |
-| Leakage | `python3 ml-foundations/checks/check_leakage.py --features lista.txt`. Usa `forbidden_columns.txt` de la raíz del proyecto; si no existe, proponer crearlo combinando `ml-foundations/checks/forbidden_columns.example.txt` y `patterns/forbidden_columns.example.txt` |
+| Leakage | `python3 ml-foundations/checks/check_leakage.py --features lista.txt`. Usa `forbidden_columns.txt` de la raíz del proyecto; si no existe, proponer crearlo combinando `ml-foundations/checks/forbidden_columns.example.txt` y `checks/forbidden_columns.example.txt` |
+| Binning WoE | `python3 checks/check_woe_bins.py binning.csv`: bins sin una clase, tamaño y malos mínimos, monotonía, IV fuera de rango. Las excepciones van con `--allow-nonmonotonic` / `--allow-high-iv` y justificación escrita |
+| Ratings | `python3 checks/check_ratings.py oot.csv --order A,B,C,D,E --expected A=0.01,... --score-col score --cohort-col cohorte`: monotonía, tamaño, calibración por rating, cortes sin superposición, separación y estabilidad |
 | Concentración de importancia | `python3 ml-foundations/checks/check_concentration.py importancias.csv` |
 | Estabilidad | `python3 ml-foundations/checks/psi.py ref.csv act.csv --column score`, o `--all-numeric` para CSI |
 

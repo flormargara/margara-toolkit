@@ -22,6 +22,7 @@ Un rating agrupa la población en bandas ordenadas de riesgo, identificadas por 
 - Calcular los cortes en una muestra (desarrollo) y **verificarlos en otra** (OOT): la tasa observada por banda en la segunda muestra no debe alejarse de la esperada más que el margen de aceptación (por ejemplo ±5 puntos).
 - **Estresar los cortes**: repetir el cálculo con ruido en las tasas esperadas o con submuestras (Monte Carlo) y ver cuánto se mueven. Cortes muy sensibles indican bandas demasiado finas.
 - Reportar por banda: cantidad, participación, malos, tasa observada, tasa esperada y diferencia.
+- `checks/check_ratings.py` hace esa tabla y verifica monotonía, tamaño mínimo, calibración, cortes de score sin superposición, separación entre bandas contiguas y estabilidad por cohorte. Con `--where grupo=control` se evalúa sobre el control.
 
 ## Aplicación en producción
 

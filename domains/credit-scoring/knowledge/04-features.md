@@ -11,6 +11,7 @@ En scores interpretables (regresión logística sobre WoE) el binning es parte d
 - Agrupaciones intuitivas antes que puramente estadísticas: el 0 en un bin propio, faltantes como bin propio, valores especiales separados.
 - Se pueden unir bins o categorías con WoE muy parecido.
 - Ajustar los cortes solo con train y, si hay indeterminados, usar solo buenos y malos.
+- `checks/check_woe_bins.py` verifica la tabla de binning: bins sin buenos o sin malos, tamaño y malos mínimos, monotonía e IV fuera de rango.
 
 ## Information Value (IV)
 

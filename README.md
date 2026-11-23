@@ -40,8 +40,13 @@ docs/           decisiones y su porqué
 | adapters | `mllc/` | Genera el catálogo de golden rules de ai-mllc desde los dominios del toolkit (`compose.py`) y explica cómo usar las skills del toolkit como soporte | En proyectos que usan ai-mllc |
 | credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
 | credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |
+| credit-scoring | `checks/roll_rate.py` | Matriz de transición y peor tramo → default; con `--bad-from` verifica la definición de malo propuesta | Al definir el evento de default |
+| credit-scoring | `checks/check_woe_bins.py` | Tabla de binning: bins sin una clase, tamaño y malos mínimos, monotonía del WoE, IV fuera de rango | Antes de la regresión logística sobre WoE |
+| credit-scoring | `checks/check_ratings.py` | Escala de ratings: monotonía, tamaño mínimo, calibración por rating, cortes sin superposición, separación y estabilidad por cohorte | Al verificar los cortes en OOT y en el monitoreo |
 | credit-scoring | `templates/` | Ficha y checklist de crédito (extienden las genéricas) | Antes de dar un score por terminado |
 | collections | `knowledge/` | Modelos de cobranzas: problem framing, entrenamiento solo con grupo de control, target de pase de tramo y autocura, leakage propio, métricas de impacto y costo | Al construir o revisar un modelo de mora o cobranzas |
+| collections | `checks/check_training_population.py` | Entrenamiento y evaluación solo con control desde el inicio del modelo; autocura solo sin gestión | Antes de entrenar o reentrenar |
+| collections | `checks/check_control_group.py` | Control persistente, proporción por rating y tamaño suficiente para reentrenar | Al diseñar el piloto y en cada reentrenamiento |
 | collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
 | productividad | `cv-con-evidencia/` | Base personal de experiencia confirmada; CVs adaptados a ofertas, auditoría de CVs y textos de postulación | Al armar o actualizar un CV o postularse a un puesto |
 | shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |

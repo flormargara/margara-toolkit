@@ -27,6 +27,8 @@ Sirve para elegir qué tramo de atraso es "malo" con evidencia, en lugar de por 
 
 Reportar la matriz usada y la decisión tomada en la ficha del modelo.
 
+`checks/roll_rate.py` calcula los dos enfoques desde la historia mensual de atrasos y, con `--bad-from <tramo>`, verifica la definición propuesta: falla si ese tramo sale bueno y advierte si sale indeterminado o si no coincide con el punto de no retorno de la matriz.
+
 ## Chequeos obligatorios
 
 - Tasa de malos por cohorte de originación: si cambia mucho entre cohortes, entenderlo antes de seguir (cambio de política, de producto, de ciclo económico).

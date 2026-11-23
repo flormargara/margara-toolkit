@@ -2,6 +2,20 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-23 — Chequeos propios de crédito y cobranzas
+
+**Decisión:** sumar tres chequeos a `credit-scoring/checks/` (`roll_rate.py`, `check_woe_bins.py`, `check_ratings.py`) y dos a `collections/checks/` (`check_training_population.py`, `check_control_group.py`).
+
+**Por qué:** las reglas centrales de esos dominios (default justificado con roll rate, binning monótono, ratings calibrados, entrenar solo con control) estaban solo en texto. Siguiendo el principio de que lo crítico se verifica con scripts, ahora fallan con error.
+
+**Entradas neutrales:** cada chequeo lee un CSV con columnas configurables (historia mensual de atrasos, tabla de binning, muestra puntuada, registro de asignaciones), no la salida de una librería concreta.
+
+**Qué falla y qué advierte:** falla lo que invalida el resultado (bins con WoE infinito, ratings no monótonos o fuera de tolerancia, cortes superpuestos, filas tratadas en el entrenamiento, control que cambia de grupo). Advierte lo que requiere juicio (bandas que podrían unirse, tramo indeterminado, cohortes inestables). Las excepciones justificadas se declaran con flags explícitos (`--allow-nonmonotonic`, `--allow-high-iv`).
+
+**Proporción del control por cuenta, no por fila:** con un control persistente la misma cuenta aparece en muchas corridas; contar filas subestima el desvío binomial y falla por ruido.
+
+**`check_ratings.py` vive en crédito:** los ratings son de ese dominio; cobranzas lo usa con `--where grupo=control`. En la skill `credit-scoring-ml`, el enlace `patterns/` pasa a llamarse `checks/` porque ya no contiene solo la lista de patrones.
+
 ## 2026-11-23 — Adaptador para ai-mllc
 
 **Decisión:** sumar `adapters/mllc/` con un catálogo de golden rules por dominio (`golden-rules/ml-foundations.md`) y `compose.py`, que los junta y valida en el formato que exige el núcleo de ai-mllc.

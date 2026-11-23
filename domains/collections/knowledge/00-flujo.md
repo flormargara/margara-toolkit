@@ -10,11 +10,11 @@ Este dominio se apoya en `ml-foundations` (universo, particiones, leakage, featu
 |---|---|---|
 | 1 | Problem framing | Tramo de entrada, horizonte, evento, acción por segmento y métrica de éxito acordados con cobranzas |
 | 2 | Análisis del modelo o la segmentación vigente | Performance actual medida sobre el grupo de control; curvas de pago por segmento |
-| 3 | Universo y target | Universo por fecha de entrada en mora; `check_universe.py` en verde |
+| 3 | Universo y target | Universo por fecha de entrada en mora; `check_universe.py` y `check_training_population.py` en verde |
 | 4 | Features y EDA | Estabilidad temporal; variables de gestión solo si están disponibles al momento de decidir |
-| 5 | Modelado y ratings | Baselines (incluida la segmentación vigente), ratings con error de calibración acotado |
+| 5 | Modelado y ratings | Baselines (incluida la segmentación vigente), ratings con error de calibración acotado (`check_ratings.py --where grupo=control`) |
 | 6 | Backtest | Modelo corrido sobre el día o mes anterior con datos congelados y validado con el negocio |
-| 7 | Piloto | Muestreo estratificado, ventanas por segmento configuradas, monitoreo diario de los primeros días |
+| 7 | Piloto | `check_control_group.py` en verde, muestreo estratificado, ventanas por segmento configuradas, monitoreo diario de los primeros días |
 | 8 | Integración | Pipelines de entrenamiento, inferencia y monitoreo; envío a la operación con alertas ante fallas |
 | 9 | Monitoreo | Mensual: desempeño sobre control, impacto contra control, costo de gestión |
 
