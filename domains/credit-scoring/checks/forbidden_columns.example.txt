@@ -31,3 +31,11 @@
 # Target y derivados
 \btarget\w*_(mean|enc\w*)
 \bflag_default\w*
+
+# Cobranzas: gestión del episodio actual de mora (posterior a la decisión).
+# Las variables de episodios anteriores son válidas: nombrarlas distinto (por ejemplo, con "_hist" o "_prev").
+\bfecha_primer\w*_gestion\w*
+\bgestion\w*_actual\w*
+\bpromesa\w*_actual\w*
+\bdias_mora_cierre\w*
+\bpase_tramo\w*

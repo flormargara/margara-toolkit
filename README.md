@@ -28,25 +28,34 @@ docs/           decisiones y su porqué
 
 | Dominio | Pieza | Qué hace | Cuándo usarla |
 |---|---|---|---|
-| credit-scoring | `knowledge/` | Metodología para construir scores de riesgo crediticio | Al diseñar, entrenar, validar o documentar un score |
-| credit-scoring | `checks/check_leakage.py` | Detecta columnas prohibidas (posteriores a la decisión) en código o listas de features | Hook después de editar código de modelado, o en CI |
-| credit-scoring | `checks/psi.py` | Calcula PSI/CSI entre dos muestras | Validación out-of-time y monitoreo |
+| credit-scoring | `knowledge/` | Metodología para scores de riesgo crediticio en 13 etapas: trazabilidad, target, universo, leakage, features, modelado, sesgo de selección, monitoreo, equidad, documentación, ratings y experimentación | Al diseñar, entrenar, validar, desplegar o monitorear un score |
+| credit-scoring | `checks/check_universe.py` | Integridad temporal del universo: orden, horizonte, madurez, entidades repetidas, duplicados | Antes de entrenar |
+| credit-scoring | `checks/check_leakage.py` | Detecta columnas prohibidas (posteriores a la decisión) en código o listas de features | Hook después de editar código, y antes de reportar métricas |
+| credit-scoring | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
+| credit-scoring | `checks/psi.py` | PSI/CSI entre dos muestras | Validación out-of-time y monitoreo |
 | credit-scoring | `templates/` | Checklist de validación y ficha del modelo | Antes de dar un modelo por terminado |
+| collections | `knowledge/` | Modelos de cobranzas: problem framing, entrenamiento solo con grupo de control, target de pase de tramo y autocura, leakage propio, métricas de impacto y costo | Al construir o revisar un modelo de mora o cobranzas |
+| collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
 | productividad | `cv-con-evidencia/` | Base personal de experiencia confirmada; CVs adaptados a ofertas, auditoría de CVs y textos de postulación | Al armar o actualizar un CV o postularse a un puesto |
+| shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
 
-Las skills de Claude están en `adapters/claude/skills/`: `credit-scoring-ml` y `cv-con-evidencia` (esta última es un enlace a `domains/productividad/cv-con-evidencia`, que ya trae su propio formato de skill).
+Skills en `adapters/claude/skills/`: `credit-scoring-ml`, `collections-ml` y `cv-con-evidencia`. Todas apuntan con enlaces simbólicos al contenido de `domains/` y `shared/`, así cada archivo existe una sola vez.
 
-## Instalación en Claude Code
+## Instalación
 
 ```bash
-./scripts/install-claude.sh
+./scripts/install.sh
 ```
 
-Crea enlaces simbólicos desde `~/.claude/skills/` hacia las skills de este repo. Los hooks no se instalan solos: copiá el bloque que corresponda de `adapters/claude/settings.example.json` al `settings.json` del proyecto donde los quieras.
+- Enlaza cada skill del catálogo en `~/.agents/skills/` (ubicación común que algunas herramientas leen directamente).
+- Desde ahí, enlaza cada skill en la carpeta de cada herramienta que lo necesita (hoy `~/.claude/skills/`). Agregar otra herramienta es agregar una línea en `TOOL_DIRS`.
+- Nunca pisa carpetas reales. `./scripts/install.sh --uninstall` quita solo los enlaces que apuntan a este repo.
+
+Los hooks no se instalan solos: copiar el bloque que corresponda de `adapters/claude/settings.example.json` al `settings.json` del proyecto donde se quieran.
 
 ## Uso en un proyecto
 
-- **Claude Code:** la skill queda disponible en todos los proyectos tras instalarla. La regla `adapters/claude/rules/credit-scoring-guardrails.md` se copia a `.claude/rules/` del proyecto.
+- **Claude Code:** las skills quedan disponibles en todos los proyectos tras instalarlas. La regla `adapters/claude/rules/credit-scoring-guardrails.md` se copia a `.claude/rules/` del proyecto.
 - **Cursor:** copiar `adapters/cursor/rules/*.mdc` a `.cursor/rules/` del proyecto.
 - **Otras herramientas:** apuntar a `adapters/AGENTS.md` o copiarlo como `AGENTS.md` del proyecto.
 
