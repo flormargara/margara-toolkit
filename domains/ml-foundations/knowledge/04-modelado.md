@@ -24,13 +24,35 @@ Un modelo más complejo tiene que ganarles en la validación final por un margen
 
 ## Experimentos como ablaciones
 
-Cada experimento cambia **una sola cosa** respecto del líder vigente (una variable nueva, otro algoritmo, otro tratamiento de faltantes), para poder atribuir la diferencia. Cada uno queda registrado con su resultado y un veredicto (✅ aceptado, ❌ descartado, ⚠️ requiere revisión). Antes de aceptar un resultado, revisar: leakage, sobreajuste (brecha train-validación mayor que la del baseline), inestabilidad entre folds o períodos, desbalance no tratado en la métrica y error concentrado en un segmento.
+Cada experimento cambia **una sola cosa** respecto de su base, por defecto el líder vigente (una variable nueva, otro algoritmo, otro tratamiento de faltantes), para poder atribuir la diferencia. Se construye copiando el script de la base y aplicando solo ese cambio: la diferencia entre los dos scripts es el experimento. Antes de aceptar un resultado, revisar: leakage, sobreajuste (brecha train-validación mayor que la del baseline), inestabilidad entre folds o períodos, desbalance no tratado en la métrica y error concentrado en un segmento. Si alguna señal aparece sin explicación, el veredicto es ⚠️, nunca ✅.
+
+Cada experimento es un script que reproduce de punta a punta desde la versión del dataset: semillas fijas, sin estado oculto, métricas escritas a un archivo. Después de cada transformación que cambia la forma o el significado de los datos, mostrar filas reales, no solo la cantidad. No imputar por defecto: si un algoritmo lo exige, decirlo antes. Un experimento que falla o no se explica entra igual al leaderboard.
+
+## Leaderboard
+
+Registro permanente de todos los experimentos (`templates/leaderboard.md`):
+
+- **Nunca se borra una fila**, tampoco las descartadas o fallidas.
+- Cada fila dice **en qué experimento se basa**. El linaje es un árbol: varios experimentos pueden compartir base.
+- Veredictos: ✅ nuevo líder, ✅ válido sin mejora (descarta una hipótesis), ❌ descartado (error, leakage o setup inválido), ⚠️ requiere revisión.
+- Cada fila reporta la métrica del loop de búsqueda (media y dispersión) y la del árbitro.
+- **Solo se compara dentro de una misma versión del dataset.** Un dataset nuevo abre una sección nueva en la que se vuelven a correr los baselines; las filas anteriores quedan como estaban.
+- El bloque "líder vigente" dice por qué gana en la métrica principal, no en la que mejor le queda al último experimento.
+
+## Incertidumbre
+
+Todo número de desempeño va con cuánto podría moverse: dispersión entre folds, semillas o remuestreos, o un intervalo de confianza, y el tamaño del conjunto en el que se midió. **Una diferencia entre candidatos menor que esa dispersión es un empate**, y entre empatados gana el más simple.
 
 ## Búsqueda de hiperparámetros
 
-- La búsqueda vive dentro de train (ver el árbitro intacto). El early stopping usa un subconjunto de train, no el conjunto con el que se va a reportar.
+- **Diagnosticar antes de tunear.** Si la brecha entre train y validación del líder es grande, regularizar puede ayudar. Si la brecha es chica pero la métrica no se mueve entre familias de modelos ni entre ablaciones de variables, el techo está en las features o en el universo y tunear no lo va a mover: decirlo y no abrir una búsqueda.
+- **Primero un estudio corto** (decenas de trials, rangos amplios) para saber si tunear esa familia mueve la métrica. Uno largo (cientos de trials, con poda, rangos acotados alrededor de la zona prometedora del corto) solo si el corto mostró ganancia y esa familia ya es la dirección confirmada.
+- Escala logarítmica para tasa de aprendizaje y fuerza de regularización. La cantidad de árboles no se busca: se fija con early stopping.
+- Registrar la búsqueda como un experimento más: la mejor configuración como cambio respecto de la base, la métrica del loop (media y dispersión), la **importancia de cada hiperparámetro** y una sola evaluación contra el árbitro.
+- La búsqueda vive dentro de train (ver el árbitro intacto). El early stopping usa un subconjunto de train, no el conjunto con el que se va a reportar. Si usa un período de test, ese test es un conjunto de selección (`01-universo-particiones.md`).
 - **Penalizar el sobreajuste y la concentración**, no solo maximizar la métrica:
-  `score = métrica_val − a · brecha(train, val) − b · exceso_de_concentración − c · participación_de_la_variable_principal`.
+  `score = métrica_val − a · max(0, métrica_train − métrica_val) − b · exceso_de_concentración − c · participación_de_la_variable_principal`.
+  La brecha se penaliza solo cuando train supera a validación; con valor absoluto se castigaría también una validación mejor que train.
   Entre configuraciones con métrica casi igual, elegir la de menor sobreajuste.
 - Rangos de hiperparámetros más conservadores cuanto más chico es el dataset.
 - Abortar la búsqueda temprano si las primeras pruebas fallan todas: suele indicar un problema de datos, no de hiperparámetros.

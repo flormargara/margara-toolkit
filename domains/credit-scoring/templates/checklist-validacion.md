@@ -24,7 +24,7 @@ Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y es
 - [ ] Validación final out-of-time
 - [ ] Elegibilidad idéntica en train, validación y scoring
 - [ ] `check_universe.py` en verde (orden, horizonte, madurez, entidades, duplicados)
-- [ ] Split por persona / grupo (sin la misma unidad en dos particiones)
+- [ ] Split por persona / grupo (sin la misma unidad en dos particiones de la búsqueda); validación final reportada completa y sin personas vistas
 - [ ] Transformaciones (binning, WoE, imputación, escalado, selección) y sampling ajustados solo con train
 - [ ] Early stopping y búsqueda de hiperparámetros sin usar el conjunto del veredicto
 - [ ] OOT mirado una sola vez, al final
@@ -84,6 +84,6 @@ Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y es
 
 ## Excepciones
 
-| Punto | Motivo | Mitigación |
-|---|---|---|
-| | | |
+| Punto | Alcance | Motivo | Mitigación | Responsable | Vence o se revisa |
+|---|---|---|---|---|---|
+| | | | | | |

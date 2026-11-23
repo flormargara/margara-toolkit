@@ -12,9 +12,11 @@ alwaysApply: false
 - Ninguna variable posterior al momento de la predicción.
 - Elegibilidad idéntica en train, validación y predicción.
 - Transformaciones y sampling ajustados solo con train.
-- La misma entidad nunca en dos particiones; sin filas con horizonte incompleto.
-- El conjunto que decide el veredicto se mira una vez; el early stopping y la búsqueda usan otro conjunto dentro de train.
-- Baselines siempre (ingenuo, regla, modelo sin tunear) y experimentos de un solo cambio.
+- La misma entidad nunca en dos particiones de la búsqueda; la validación final se reporta completa y sin entidades vistas. Sin filas con horizonte incompleto.
+- Si la acción llega después de la predicción, el target se mide desde que se puede actuar.
+- El conjunto que decide el veredicto se mira una vez; el early stopping, la búsqueda y la selección de variables con target usan otro conjunto dentro de train. Un test usado para elegir es conjunto de selección.
+- Train, validación y scoring salen de la misma receta con distinto universo.
+- Baselines siempre (ingenuo, regla, modelo sin tunear), experimentos de un solo cambio en un leaderboard y métricas con su dispersión.
 - Desempeño sospechosamente alto o una variable dominante se tratan como sospecha de leakage.
 - Si el modelo se rebalanceó y la predicción se usa como probabilidad, se recalibra.
 - Si la acción cambia el resultado, el modelo se entrena y evalúa solo con el grupo de control.
@@ -26,7 +28,9 @@ alwaysApply: false
 
 Todos en `~/projects/margara-toolkit/domains/ml-foundations/checks/`:
 
+- Perfil del target: `python3 target_profile.py universo.csv --date-col fecha_corte --target-col target`
 - Universo: `python3 check_universe.py universo.csv --horizon-days N --last-data-date AAAA-MM-DD --id-col <id>`
+- Dataset: `python3 check_dataset.py --split train=m_train.csv --split val=m_val.csv --universe train=u_train.csv --universe val=u_val.csv --id-col <id>`
 - Leakage: `python3 check_leakage.py --features lista.txt` (usa `forbidden_columns.txt` de la raíz del proyecto)
 - Concentración: `python3 check_concentration.py importancias.csv`
 - PSI/CSI: `python3 psi.py ref.csv act.csv --column score`

@@ -19,6 +19,7 @@ shared/         lo transversal a varios dominios
 adapters/
   claude/       skills, reglas, subagentes y ejemplo de hooks para Claude Code
   cursor/       reglas .mdc para Cursor
+  mllc/         catálogo de golden rules para ai-mllc
   AGENTS.md     punto de entrada común para cualquier herramienta
 scripts/        instalación y utilidades del propio toolkit
 docs/           decisiones y su porqué
@@ -28,12 +29,15 @@ docs/           decisiones y su porqué
 
 | Dominio | Pieza | Qué hace | Cuándo usarla |
 |---|---|---|---|
-| ml-foundations | `knowledge/` | Prácticas de ML supervisado con datos en el tiempo, en 10 etapas: problem framing, universo y particiones, leakage, features, modelado, población y sesgo, monitoreo, experimentación, trazabilidad y documentación | En cualquier proyecto de modelado |
+| ml-foundations | `knowledge/` | Prácticas de ML supervisado con datos en el tiempo, en 11 etapas: ¿hace falta ML? y problem framing, universo y particiones, leakage, features, dataset, modelado, población y sesgo, monitoreo, experimentación e impacto, trazabilidad y documentación | En cualquier proyecto de modelado |
+| ml-foundations | `checks/target_profile.py` | Perfil del target por período: volumen, tasa, tendencia, saltos de régimen y veredicto viable / parcial / descartado | Antes de definir cortes y particiones |
 | ml-foundations | `checks/check_universe.py` | Integridad temporal del universo: orden, horizonte, madurez, entidades repetidas, duplicados | Antes de entrenar |
+| ml-foundations | `checks/check_dataset.py` | Gate del dataset: duplicados de grano, filas y target preservados contra el universo, superposición temporal, faltantes, esquema idéntico entre train, validación y scoring | Antes de modelar |
 | ml-foundations | `checks/check_leakage.py` | Detecta columnas prohibidas en código o listas de features (la lista de patrones la pone cada dominio) | Hook después de editar código, y antes de reportar métricas |
 | ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
 | ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
-| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas | Antes de dar un modelo por terminado |
+| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; contrato del dataset, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
+| adapters | `mllc/` | Genera el catálogo de golden rules de ai-mllc desde los dominios del toolkit (`compose.py`) y explica cómo usar las skills del toolkit como soporte | En proyectos que usan ai-mllc |
 | credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
 | credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |
 | credit-scoring | `templates/` | Ficha y checklist de crédito (extienden las genéricas) | Antes de dar un score por terminado |
@@ -63,6 +67,7 @@ Los hooks no se instalan solos: copiar el bloque que corresponda de `adapters/cl
 - **Claude Code:** las skills quedan disponibles en todos los proyectos tras instalarlas. Las reglas de `adapters/claude/rules/` se copian a `.claude/rules/` del proyecto: `ml-guardrails.md` en cualquier proyecto de ML, y además `credit-scoring-guardrails.md` en uno de crédito.
 - **Cursor:** copiar a `.cursor/rules/` del proyecto `ml-foundations.mdc` y, si es de crédito, también `credit-scoring.mdc`.
 - **Otras herramientas:** apuntar a `adapters/AGENTS.md` o copiarlo como `AGENTS.md` del proyecto.
+- **ai-mllc:** generar el catálogo de golden rules con `python3 adapters/mllc/compose.py ml-foundations --out <carpeta de configuración>/mllc-golden-rules.md` (ver `adapters/mllc/README.md`).
 
 ## Cómo crece este repo
 

@@ -2,6 +2,27 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-23 — Adaptador para ai-mllc
+
+**Decisión:** sumar `adapters/mllc/` con un catálogo de golden rules por dominio (`golden-rules/ml-foundations.md`) y `compose.py`, que los junta y valida en el formato que exige el núcleo de ai-mllc.
+
+**Por qué:** ai-mllc conduce el proceso y bloquea el cierre de una etapa ante una regla bloqueante, pero no trae reglas propias. El toolkit tiene las reglas y los chequeos. Son capas complementarias: el toolkit no se fusiona con ai-mllc ni depende de él.
+
+**Cómo:** cada regla declara fuerza, etapa, mecanismo y estado. Las de mecanismo `check_determinista` nombran el script de `checks/` y su código de salida se traduce a cumple / no cumple. El catálogo absorbe las tres reglas de referencia que siembra ai-mllc. `compose.py` no pisa un catálogo existente sin `--force`, igual que ai-mllc. Se validó contra el parser real de ai-mllc (0.1.0a1).
+
+**Pendiente:** catálogos de `credit-scoring` y `collections`.
+
+## 2026-11-23 — Prioridades A del relevamiento de repos del equipo
+
+**Decisión:** incorporar a `ml-foundations` lo de prioridad alta del relevamiento de tres años de repos, skills y documentación del equipo: el gate "¿hace falta ML?", uso y respaldo del modelo, demora entre predicción y acción, perfil del target, la etapa de dataset (`03b-dataset.md`), selección sin target vs. predictiva, leaderboard, incertidumbre de métricas, diagnóstico antes de tunear, referencia correcta y gate de entradas en monitoreo, y la ficha de impacto. Dos chequeos nuevos (`target_profile.py`, `check_dataset.py`) y tres plantillas (contrato del dataset, leaderboard, ficha de impacto).
+
+**Dos cambios de criterio respecto de la versión anterior:**
+
+- **Entidades vistas en la validación final:** antes se excluían. Ahora se reporta la validación completa y sin entidades vistas, y el árbitro se elige según la población de predicción. Excluir siempre medía la generalización a entidades nuevas pero no el desempeño real. `check_universe.py` suma `--arbiter-overlap` para no fallar por entidades compartidas solo con la validación final.
+- **Test como conjunto de selección:** si el test se usa para early stopping, elegir trials, elegir variables o calibrar, se rotula así y su métrica no se reporta como desempeño. La ficha del modelo lo distingue.
+
+**Además:** la penalización por sobreajuste usa `max(0, train − val)` en lugar del valor absoluto, y la regla de promoción aclara que "mejora mayor que cero" no alcanza.
+
 ## 2026-11-23 — Separar lo genérico de ML en `ml-foundations`
 
 **Decisión:** crear el dominio `ml-foundations` con las prácticas de ML supervisado que no dependen del dominio (universo y particiones, leakage, features, modelado, población y sesgo, monitoreo, experimentación, trazabilidad, documentación), los chequeos genéricos y plantillas genéricas, más la skill `ml-practices`. `credit-scoring` queda solo con lo específico de crédito y cada archivo apunta al general que aplica.

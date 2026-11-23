@@ -25,6 +25,46 @@ Reglas:
 
 Cada paso termina con un veredicto explícito: ✅ listo, ❌ descartado, ⚠️ requiere revisión. Un paso sin veredicto no está cerrado y el agente no avanza al siguiente.
 
+Que un script termine bien o que una métrica sea buena es evidencia, no cierre. El agente presenta la evidencia y su interpretación; la etapa la cierra una decisión explícita del responsable: aceptar, aceptar con condiciones, devolver o descartar.
+
+El agente trabaja solo entre esos puntos y resuelve lo operativo sin preguntar. Pide una decisión cuando cambia el sentido o la validez del resultado, cuando una regla bloqueante no se cumple, cuando propone una excepción o cuando hay que cerrar.
+
+Una excepción a una regla se registra con: qué regla, alcance, motivo, consecuencias aceptadas, responsable, qué resultados dependen de ella y cuándo vence o se revisa.
+
+## Reglas con fuerza, mecanismo y estado
+
+Cada regla de un dominio se puede describir con tres atributos. Así se ve qué reglas tienen un chequeo que las hace cumplir y cuáles dependen de que alguien las lea:
+
+| Atributo | Valores |
+|---|---|
+| Fuerza | **bloqueante** (no se cierra la etapa sin cumplirla o sin una excepción), **alerta** (se muestra y se decide), **sugerencia** |
+| Mecanismo | El más barato que preserva la validez: **chequeo determinista** (un script que falla), **atestación** (el agente muestra la evidencia pedida), **discusión** (se acuerda con el responsable y se registra) |
+| Estado | **draft** (se evalúa y se muestra, pero nunca bloquea) o **active** |
+
+- La falta de evidencia bloquea igual que el incumplimiento: un chequeo que no se pudo correr no es verde.
+- Cambiar el sentido de una regla es una versión nueva; corregir la redacción no.
+- Una regla nueva entra como draft y se activa cuando se probó en proyectos reales.
+- El catálogo de `ml-foundations` con estos atributos está en `adapters/mllc/golden-rules/ml-foundations.md`.
+
+## Cómo redactar reglas para agentes
+
+- Una idea por regla, en imperativo y concreta.
+- El porqué, si no es obvio: un agente aplica mejor una regla cuyo motivo entiende.
+- Qué no hacer, además de qué hacer.
+- Un ejemplo antes que una explicación larga.
+- Separar las reglas siempre activas de las que aplican a un tipo de proyecto o de archivo.
+- Pocas reglas: con muchas, el modelo pierde las del medio; lo primero y lo último del contexto pesan más.
+
+## Recibir material de otra persona
+
+Al tomar notebooks, scripts o queries para llevarlos a producción, marcar como riesgo, sin descartarlo en silencio:
+
+- Credenciales o secretos en el código.
+- Rutas absolutas de la máquina de quien lo escribió.
+- Notebooks con estado oculto: celdas ejecutadas fuera de orden o variables globales modificadas entre celdas.
+
+No cambiar la lógica de negocio o de modelado al reinterpretarla: solo clasificarla. Los datos reales que vengan con el material no se commitean.
+
 ## Definiciones de negocio: una pregunta a la vez
 
 En target, métrica principal, umbral de "suficientemente bueno" y restricciones:

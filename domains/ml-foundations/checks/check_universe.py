@@ -17,6 +17,9 @@ Chequeos automáticos:
   4. Entidades repetidas entre particiones (si se indica --id-col).
   5. Duplicados de (entidad, fecha_corte) (si se indica --id-col).
 Con --fold-col, 1, 2 y 4 se evalúan dentro de cada fold.
+Con --arbiter-overlap, las entidades compartidas con la última partición de --order
+(la validación final) son advertencia y no falla: esa partición se reporta completa y
+sin entidades vistas. Entre train y test sigue fallando.
 
 No automatizable (se recuerda en la salida): que el filtro de elegibilidad sea
 idéntico en train, validación y scoring.
@@ -115,6 +118,9 @@ def main() -> int:
     p.add_argument("--fold-col", help="Columna de fold para backtesting")
     p.add_argument("--allow-entity-overlap", action="store_true",
                    help="No fallar si una entidad aparece en dos particiones (solo con justificación)")
+    p.add_argument("--arbiter-overlap", action="store_true",
+                   help="Permitir entidades vistas solo en la última partición de --order (la validación "
+                        "final, que se reporta completa y sin entidades vistas); entre las demás sigue fallando")
     args = p.parse_args()
 
     order = [s.strip().lower() for s in args.order.split(",") if s.strip()]
@@ -152,6 +158,14 @@ def main() -> int:
 
     if args.allow_entity_overlap:
         results = [("WARN" if s == "FAIL" and "entidades compartidas" in m else s, l, m) for s, l, m in results]
+    elif args.arbiter_overlap and order:
+        arbiter = order[-1]
+        results = [
+            ("WARN" if s == "FAIL" and "entidades compartidas" in m
+             and (f"compartidas {arbiter} /" in m or f"/ {arbiter}:" in m) else s, l, m)
+            for s, l, m in results
+        ]
+        results.append(("MANUAL", "", f"reportar {arbiter} en dos vistas: completa y sin entidades vistas en train o test"))
 
     for status, label, msg in results:
         print(f"{status:<5} {label}{msg}")

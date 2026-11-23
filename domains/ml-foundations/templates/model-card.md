@@ -14,9 +14,18 @@
 - Decisión que apoya:
 - Población objetivo:
 - Momento de la predicción:
+- Demora entre la predicción y la acción:
 - Población excluida (con volumen):
 - Uso permitido:
 - Usos no permitidos:
+
+### Consumo y respaldo
+- Quién consume la salida y qué sistema o proceso la toma:
+- Modo de entrega (batch, API, tabla, archivo), frecuencia y SLA:
+- Medio de envío y qué pasa si falla (reintento, reenvío, aviso):
+- Si el modelo falla o no está disponible: respaldo (regla, versión anterior, no decidir) y si el sistema falla abierto o cerrado:
+- Responsable de mantenimiento por tramo (datos, pipeline, integración, monitoreo):
+- En tiempo real: latencia p50 y p99, throughput, disponibilidad, frescura de las features online:
 
 ## 2. Target
 - Evento o valor que se predice:
@@ -26,15 +35,21 @@
 
 ## 3. Datos y particiones
 
-| Partición | Período | N | Eventos / media del target |
-|---|---|---|---|
-| Train | | | |
-| Test | | | |
-| Validación final | | | |
+| Partición | Período | N | Eventos / media del target | Uso |
+|---|---|---|---|---|
+| Train | | | | Entrenamiento |
+| Test | | | | Selección (early stopping, trials, variables, calibración) o evaluación |
+| Validación final | | | | Árbitro |
 
-Esquema de validación (árbitro y búsqueda dentro de train):
+Perfil del target por período y veredicto de `target_profile.py`:
+
+Esquema de validación (árbitro, vista del árbitro —completa o sin entidades vistas— y búsqueda dentro de train):
 
 Veredicto de `check_universe.py`:
+
+Versión del dataset y veredicto de `check_dataset.py` (ver contrato del dataset):
+
+Tablas de las que depende el modelo (para el gate de entradas):
 
 Fuentes de datos y cobertura de trazabilidad:
 
@@ -71,10 +86,14 @@ Concentración de importancia (top-1, top-3, número efectivo):
 
 ## 6. Desempeño
 
-| Métrica | Train | Test | Validación final (IC 95%) |
-|---|---|---|---|
-| | | | |
-| PSI de la predicción vs. desarrollo | — | | |
+Si el test se usó para elegir, su métrica es optimista: no leerla como desempeño.
+
+| Métrica | Train | Test (selección / evaluación) | Validación final completa (IC 95%) | Validación final sin entidades vistas (IC 95%) |
+|---|---|---|---|---|
+| | | | | |
+| PSI de la predicción vs. desarrollo | — | | | |
+
+Leaderboard (enlace) y líder elegido:
 
 Desempeño por período y por segmento:
 
@@ -87,13 +106,20 @@ Tabla de opciones entregada y umbral elegido por:
 
 Grupo de control (proporción, persistencia, exclusiones, qué recibe):
 
-Métrica de impacto:
+Métrica de impacto y ficha de impacto (enlace):
+
+Tabla de salida (nombre y columnas: identificador, fecha de predicción, modelo, versión, score, banda o decisión, variante de experimento, partición):
+
+Calendario de pipelines (entrenamiento, inferencia, monitoreo) y demora del ground truth:
+
+Referencia del monitoreo: métrica de la validación final de esta versión y artefactos del modelo vigente.
 
 | Capa | Métrica | Frecuencia | Umbral de alerta | Responsable | Acción |
 |---|---|---|---|---|---|
 | Negocio | | | | | |
+| Modelo | Métrica principal vs. validación final de la versión | Por cohorte madura | −10% alerta, −20% crítico, con IC que excluya la referencia | | |
 | Modelo | PSI de la predicción | | > 0.25 | | |
-| Datos | Frescura de particiones | Cada corrida | | | |
+| Datos | Gate de entradas: esquema, volumen, frescura | Cada corrida | Falla cerrada | | |
 
 Regla de promoción (margen mínimo para reemplazar al vigente):
 

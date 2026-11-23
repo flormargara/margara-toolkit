@@ -31,6 +31,35 @@ Asignación persistente ("sticky"), por banda:
 - No nombrar "poder discriminante" a un cociente entre control y tratamiento: eso mide impacto.
 - Reportar el impacto también en términos de negocio: valor generado, costo de la acción, volumen.
 
+## Ficha de impacto
+
+La performance técnica no dice cuánto valor genera el modelo. Cada implementación (dónde y cómo se usa el modelo) tiene una ficha de impacto (`templates/ficha-impacto.md`), armada en cinco capas:
+
+1. **Objetivo:** objetivo de negocio, KPI nativo del dominio con su unidad y la dirección deseada (sube o baja). No se convierten todas las unidades a una sola.
+2. **Cálculo propuesto:** cómo se calcula el KPI y su contrafactual, con las tablas, los supuestos y un valor de muestra.
+3. **Elección:** se fija el cálculo, el tipo de contrafactual y la ventana de maduración.
+4. **Cálculo versionado:** código con parámetros estándar (período, identificadores) e inmutable. Cambiarlo genera una versión nueva.
+5. **Aprobación:** el dueño del dominio aprueba esa versión. Solo las fichas aprobadas entran a los números oficiales; las demás corren en modo ensayo.
+
+### Tipos de contrafactual
+
+| Contrafactual | Lectura |
+|---|---|
+| Grupo de control u holdout | El más confiable; requiere diseñarlo antes de lanzar |
+| A/B | Igual, cuando se comparan dos variantes |
+| Champion-challenger | Impacto relativo al modelo anterior, no al proceso sin modelo |
+| Línea base (antes/después) | Confunde el efecto del modelo con todo lo demás que cambió; usar con cautela |
+| Sin contrafactual | Solo el resultado absoluto. Se registra marcado así y abre un pendiente para diseñar un holdout. No se presenta como impacto |
+
+### Reglas de registro
+
+- **Ventana de maduración:** mientras el resultado no se estabiliza (mora, contracargos, recompras), la medición es **preliminar** y se recalcula en cada cierre hasta quedar **definitiva**.
+- **Append-only:** un recálculo agrega una revisión nueva, nunca pisa la anterior. Una vista aparte muestra la revisión vigente.
+- **"Sin dato" no es "impacto cero":** un período sin datos se registra como tal, con su motivo.
+- Cada valor queda atribuido a la versión del modelo vigente en ese período.
+- Contrato de salida por período: valor observado, valor contrafactual, impacto, tamaño (n), intervalo si se puede, y advertencias.
+- Repetir un cierre con los mismos datos no genera revisiones duplicadas; si un cálculo falla, se registra la falla y el resto sigue.
+
 ## Pilotos y pruebas
 
 - Antes del despliegue completo, un **backtest** sobre el período anterior con el dataset congelado, revisado con el negocio, y un **piloto** con muestreo estratificado y monitoreo diario de los primeros días.

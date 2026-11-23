@@ -15,7 +15,8 @@ PSI = Σ (actual% − referencia%) · ln(actual% / referencia%)
 - Usar los mismos cortes (deciles de la referencia) para ambas poblaciones.
 - Bins vacíos rompen el logaritmo: aplicar un piso pequeño (por ejemplo 0.0001).
 - El **CSI** es el mismo cálculo por variable; sirve para encontrar qué variable explica un PSI alto.
-- `checks/psi.py` implementa ambos. Para continuas también sirven KS de dos muestras, Wasserstein o Cramér-von Mises; para categóricas, chi² o Jensen-Shannon.
+- `checks/psi.py` implementa ambos. Para continuas también sirven Wasserstein o Cramér-von Mises; para categóricas, Jensen-Shannon.
+- Preferir medidas de magnitud con umbrales fijos (PSI, Wasserstein) antes que p-valores (KS, chi²). El p-valor depende del tamaño de la muestra: con el período completo casi todo "deriva", y sobre una muestra chica el resultado cambia según qué filas tocaron. Si se usa una prueba con p-valor, fijar y documentar el tamaño de la muestra.
 
 En la validación: PSI de la predicción entre desarrollo y validación final, y CSI de cada variable entre períodos de desarrollo para descartar las inestables antes del modelo final.
 
@@ -29,8 +30,33 @@ Cubrir primero la capa de negocio y después las demás.
 | **Modelo** | Métrica principal sobre cohortes maduras; PSI de la predicción; CSI de variables; drift de importancias | PSI y CSI, inmediato; métrica, al cerrar el horizonte |
 | **Datos** | Calidad de las fuentes; frescura de la última partición de cada tabla; tasa de faltantes por variable; categorías nuevas | Inmediato |
 
+### Contra qué se compara
+
+- **Drift:** la referencia son los datos y las predicciones del **modelo vigente** en producción. No los del último reentrenamiento que perdió la promoción: eso mide drift contra una referencia que nunca estuvo en producción.
+- **Desempeño:** la referencia es la métrica de la **validación final** documentada para la versión vigente, no la de test (que suele ser un conjunto de selección y está inflada, lo que genera falsas alarmas).
+- Sin referencia documentada para la versión, el indicador queda en gris (sin evaluar), nunca en verde. Un modelo que aparece en producción sin configuración de monitoreo es una alerta.
+- Si el modelo se recalibra sin cambiar de versión, comparar dentro de la misma grilla de bandas y registrar cada cambio de grilla como un evento.
+
+### Cuándo un desvío es un hallazgo
+
+- Solo sobre **cohortes maduras** (el horizonte ya se cumplió).
+- Solo si el **intervalo de confianza del valor observado excluye el esperado**, no por la diferencia puntual.
+- Lo que todavía no maduró, o no cumple lo anterior, se marca "a vigilar" y no dispara acciones.
+- Umbrales simples para la métrica principal: alerta si empeora 10% o más respecto de la referencia, crítico si empeora 20% o más. Ajustarlos por modelo y dejarlos escritos.
+
+### Gate de calidad de entradas
+
+Antes de cada corrida de inferencia o entrenamiento, una señal pasa / no pasa por tabla de entrada:
+
+- **Esquema:** nombres y tipos de columnas iguales a los esperados.
+- **Volumen:** la partición no está vacía y no cae más de un umbral respecto de la anterior.
+- **Disponibilidad y frescura:** la partición esperada existe y está actualizada a la fecha de corte.
+
+Si no pasa, la corrida no publica predicciones (falla cerrada) y avisa. Una tabla rota puede producir que nadie reciba una oferta o que todos la reciban. Mantener un inventario de qué tablas consume cada modelo, con su esquema esperado y su criticidad, para saber qué vigilar primero.
+
 Detalles:
 
+- **Demora del ground truth:** dejar escrito cuánto tarda en llegar y programar el monitoreo de desempeño en consecuencia. Mientras no hay ground truth se monitorea solo drift, y se dice.
 - **Cohortes por fecha de predicción**, a lo largo de toda la vida del modelo. Por cada cohorte madura: métrica y resultado por decil o banda. La pregunta es "¿sigue ordenando o está mezclando?".
 - **Indicadores tempranos** que anticipen el resultado antes de que se cumpla el horizonte completo.
 - **Si la acción cambia el resultado**, las métricas de desempeño se calculan sobre el **grupo de control**. Sobre los tratados, el modelo "se ve peor" justamente porque la acción funcionó.
@@ -56,7 +82,7 @@ Cada reentrenamiento compara tres candidatos sobre la misma cohorte madura que n
 
 Reglas:
 
-- El challenger gana solo si mejora la métrica principal (y las secundarias acordadas) por un **margen mínimo** o si el intervalo de confianza por bootstrap de la diferencia no incluye cero, **y** no empeora la calibración.
+- El challenger gana solo si mejora la métrica principal (y las secundarias acordadas) por un **margen mínimo** o si el intervalo de confianza por bootstrap de la diferencia no incluye cero, **y** no empeora la calibración. "Mejora mayor que cero" no alcanza. Exigir que mejoren a la vez varias métricas o vistas sin margen tampoco: con ruido, pasa o falla por azar.
 - Si no, el recalibrado gana si reduce el error de calibración respecto del champion.
 - En cualquier otro caso, o si faltan datos, se queda el champion.
 
@@ -65,6 +91,8 @@ Una mejora mínima es ruido: reemplazar un modelo tiene costos (recalibrar, comu
 ## Reentrenamiento automático
 
 - Ningún reentrenamiento automático publica un modelo sin pasar por la regla de promoción.
+- La política de reentrenamiento automático arranca en "solo notificar" y se activa recién cuando los umbrales se validaron con algunos ciclos reales.
+- **Reentrenar o hacer una versión nueva.** Reentrenar es mantenimiento: mismo problema, mismo target, mismo uso, datos nuevos. Una versión nueva es rediseño: cambió el negocio o el proceso, se piden otros outputs, ventanas o segmentos, hace falta otro target u otras fuentes, o hay problemas estructurales de calibración o cobertura. Antes de una versión nueva, preguntar a quien usa el modelo qué decisiones se tomaron realmente con él, qué le resultó útil, qué lo frustró y qué evidencia necesita para confiar en la nueva.
 - **Bucle de retroalimentación:** si el modelo decide a quién se trata, se entrena con el grupo de control (ver `05-poblacion-y-sesgo.md`).
 
 ## Comunicación de resultados

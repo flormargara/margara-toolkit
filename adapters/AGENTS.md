@@ -15,16 +15,22 @@ Seguir `shared/knowledge/agent-workflow.md`: archivos de memoria del proyecto (`
    - Validación final fuera de tiempo; elegibilidad idéntica en train, validación y predicción.
    - Ninguna variable posterior al momento de la predicción.
    - Transformaciones y sampling ajustados solo con train.
-   - La misma entidad nunca en dos particiones.
-   - El conjunto del veredicto se mira una vez; la búsqueda vive dentro de train.
-   - Baselines y experimentos de un solo cambio.
+   - La misma entidad nunca en dos particiones de la búsqueda; la validación final se reporta completa y sin entidades vistas.
+   - Si la acción llega después de la predicción, el target se mide desde que se puede actuar.
+   - El conjunto del veredicto se mira una vez; la búsqueda y la selección de variables con target viven dentro de train.
+   - Train, validación y scoring salen de la misma receta con distinto universo.
+   - Baselines y experimentos de un solo cambio, en un leaderboard; métricas con su dispersión.
    - Desempeño sospechosamente alto o una variable dominante: revisar leakage antes de seguir.
    - Reemplazar el modelo vigente solo por un margen mínimo y sin empeorar la calibración.
    - Si la acción cambia el resultado, entrenar y evaluar con el grupo de control.
-3. Antes de reportar métricas de un modelo nuevo, correr en `domains/ml-foundations/checks/`:
-   `check_universe.py`, `check_leakage.py --features <lista>` y `check_concentration.py`.
+3. Correr en `domains/ml-foundations/checks/`: `target_profile.py` antes de particionar; y antes de reportar métricas de un modelo nuevo,
+   `check_universe.py`, `check_leakage.py --features <lista>`, `check_dataset.py` y `check_concentration.py`.
 4. Al cerrar el modelo, completar las plantillas de `domains/ml-foundations/templates/` dentro del proyecto.
 5. Si una regla choca con lo pedido, decirlo explícitamente.
+
+## Con ai-mllc
+
+Si el proyecto usa ai-mllc, generar su catálogo de golden rules desde el toolkit con `adapters/mllc/compose.py` (ver `adapters/mllc/README.md`).
 
 ## Credit scoring
 
