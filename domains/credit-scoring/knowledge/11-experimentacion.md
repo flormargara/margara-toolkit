@@ -1,36 +1,23 @@
-# Experimentación y medición de impacto
+# Experimentación en crédito
 
-Un buen AUC no prueba que el modelo genere valor. El impacto se mide comparando contra lo que habría pasado sin el modelo, y eso requiere un grupo de control diseñado antes de lanzar.
+Aplica todo `ml-foundations/knowledge/07-experimentacion.md`: grupo de control por banda, tamaño mínimo, control persistente, ITT y separación entre discriminación e impacto. Acá están los experimentos propios de crédito.
 
-## Diseño del grupo de control
+## Bandas de prueba en originación
 
-- **Aleatorio dentro de cada rating** (o banda de score), no global: así se puede medir el efecto por segmento y el control representa a todos los niveles de riesgo.
-- **Tamaño por rating** según el riesgo y el costo de no actuar. Ejemplo usado en cobranzas: 3% del control en los ratings de menor riesgo, 5% en los intermedios y 8% en los de mayor riesgo.
-- **Tamaño mínimo** para poder medir: `control mínimo = eventos objetivo / tasa esperada del evento`, por rating. Si no alcanza, alargar el período o agrupar ratings.
-- **Exclusiones del control** por riesgo o por regulación (por ejemplo, deudas muy grandes que no se pueden dejar sin gestionar), documentadas y con su volumen.
-- **Asignación determinista y reproducible** (hash del identificador con una semilla registrada).
+Para saber cómo pagan los solicitantes que hoy se rechazan, aprobar una muestra aleatoria y acotada **por debajo del corte vigente**:
 
-## Control persistente entre corridas
+- Definir el tamaño por la cantidad de malos que hace falta observar y el monto máximo de pérdida que el negocio acepta.
+- Limitar el monto y el plazo de esas operaciones.
+- Es la única evidencia directa para reject inference y para mover el corte (ver `06-sesgo-seleccion.md`).
 
-Si el modelo se corre todos los días o todos los meses, reasignar el control desde cero en cada corrida lo contamina: una persona que fue control y después tratada ya no sirve para ninguna de las dos mediciones.
+## Estrategias de límite
 
-Asignación persistente ("sticky"), por rating:
+Para scores comportamentales, upsell y downsell:
 
-1. Quien fue control sigue siendo control (aunque cambie de rating, manda el rating nuevo para el conteo).
-2. Si falta para llegar al tamaño objetivo, se completa primero con personas **nuevas**, que no estaban en la corrida anterior.
-3. Solo si todavía falta, se completa con ex-tratados.
-4. Se registra la variante, la corrida y la versión del modelo en cada asignación.
+- Probar dos o tres estrategias (por ejemplo, distintos porcentajes de aumento) contra un grupo control sin cambio, dentro de cada rating.
+- Medir uso, ingresos por intereses, mora y pérdida en una ventana suficiente; un aumento de límite puede subir el uso rápido y la mora más tarde.
+- Definir de antemano qué cuentas son elegibles (por ejemplo, activas, con buen comportamiento de pago en los últimos meses y sin bloqueos recientes).
 
-## Medición
+## Cambios de política
 
-- **Intención de tratamiento (ITT):** se compara a todos los asignados a tratamiento contra todos los asignados a control, aunque algunos tratados no hayan recibido la acción. Es la estimación honesta del efecto de usar el modelo.
-- Separar dos preguntas que suelen mezclarse:
-  - **¿El modelo ordena?** AUC/KS y tasa por rating calculados **sobre el grupo de control**, donde el resultado no está afectado por la acción.
-  - **¿La acción guiada por el modelo funciona?** Diferencia de resultados entre tratamiento y control (uplift), por rating.
-- Reportar el impacto también en términos de negocio: pérdidas evitadas, recupero, costo de gestión, aprobaciones adicionales.
-
-## Pilotos y bandas de prueba
-
-- Antes del despliegue completo, un **backtest** sobre el día o el mes anterior con el dataset congelado, y un **piloto** con muestreo estratificado y monitoreo diario de los primeros días.
-- Para validar un cambio de política o de corte (por ejemplo, aprobar por debajo del corte vigente), una **banda de prueba** controlada es la única forma de observar el desempeño real de la zona que hoy se rechaza (ver `06-sesgo-seleccion.md`).
-- Experimentar también sobre la política, no solo sobre el modelo: probar dos o tres estrategias contra un control (por ejemplo, distintos aumentos de límite).
+Cada cambio de regla o de corte se identifica con una versión de política o un ID de campaña registrado en la evaluación (ver `12-trazabilidad.md`), para poder comparar resultados entre versiones.

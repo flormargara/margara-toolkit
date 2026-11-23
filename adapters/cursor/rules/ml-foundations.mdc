@@ -1,0 +1,38 @@
+---
+description: Buenas prácticas de ML supervisado con datos en el tiempo (problem framing, universo y particiones out-of-time, leakage, features, baselines y experimentos, calibración, población de entrenamiento vs. de predicción, grupo de control, monitoreo, trazabilidad, documentación).
+globs: ["**/*.py", "**/*.ipynb", "**/*.sql"]
+alwaysApply: false
+---
+
+# Prácticas de ML supervisado
+
+## Reglas que no se negocian
+
+- Con datos en el tiempo, la validación final es fuera de tiempo. Un split aleatorio solo sirve dentro de train, para tunear.
+- Ninguna variable posterior al momento de la predicción.
+- Elegibilidad idéntica en train, validación y predicción.
+- Transformaciones y sampling ajustados solo con train.
+- La misma entidad nunca en dos particiones; sin filas con horizonte incompleto.
+- El conjunto que decide el veredicto se mira una vez; el early stopping y la búsqueda usan otro conjunto dentro de train.
+- Baselines siempre (ingenuo, regla, modelo sin tunear) y experimentos de un solo cambio.
+- Desempeño sospechosamente alto o una variable dominante se tratan como sospecha de leakage.
+- Si el modelo se rebalanceó y la predicción se usa como probabilidad, se recalibra.
+- Si la acción cambia el resultado, el modelo se entrena y evalúa solo con el grupo de control.
+- Un modelo nuevo reemplaza al vigente solo por un margen mínimo y sin empeorar la calibración.
+- El umbral de decisión lo decide el dueño de la decisión.
+- Si el código y la documentación se contradicen, seguir el código y avisar.
+
+## Chequeos
+
+Todos en `~/projects/margara-toolkit/domains/ml-foundations/checks/`:
+
+- Universo: `python3 check_universe.py universo.csv --horizon-days N --last-data-date AAAA-MM-DD --id-col <id>`
+- Leakage: `python3 check_leakage.py --features lista.txt` (usa `forbidden_columns.txt` de la raíz del proyecto)
+- Concentración: `python3 check_concentration.py importancias.csv`
+- PSI/CSI: `python3 psi.py ref.csv act.csv --column score`
+
+## Referencias
+
+- Metodología: `~/projects/margara-toolkit/domains/ml-foundations/knowledge/` (00-flujo.md es el índice).
+- Forma de trabajar con agentes: `~/projects/margara-toolkit/shared/knowledge/agent-workflow.md`.
+- Plantillas: `~/projects/margara-toolkit/domains/ml-foundations/templates/`.

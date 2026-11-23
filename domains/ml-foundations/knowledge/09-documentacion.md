@@ -1,0 +1,34 @@
+# Documentación y reproducibilidad
+
+Un modelo no está terminado hasta que otra persona puede entender, reproducir y cuestionar cada decisión.
+
+## Entregables mínimos
+
+1. **Ficha del modelo** (`templates/model-card.md`): propósito, población, target, datos, variables, desempeño, limitaciones, uso permitido.
+2. **Checklist de validación** (`templates/checklist-validacion.md`) completo, con cada punto marcado o con su excepción justificada.
+3. **Diccionario de variables** finales: definición, fuente, fecha de disponibilidad, tratamiento de faltantes, dirección esperada del efecto.
+4. **Código reproducible:** un comando regenera la muestra, las particiones, el modelo y las métricas reportadas.
+5. **Registro de decisiones y experimentos:** qué alternativas se descartaron y por qué.
+
+## Reproducibilidad
+
+- Cada corrida productiva registra el tag **inmutable** de la imagen o del paquete (por ejemplo `sha-<commit>`), nunca `latest`.
+- Cada predicción guardada lleva versión del modelo y fecha de predicción.
+- Todas las entradas de un pipeline se leen con fecha explícita, de modo que sea imposible correrlo con una fecha equivocada sin que se note.
+- Semillas fijas en sampling, particiones y entrenamiento.
+
+## La documentación tiene que coincidir con el código
+
+La documentación desactualizada es peor que la ausente: quien la lee, persona o agente, saca conclusiones equivocadas con confianza.
+
+- Generar la descripción de particiones, features y parámetros a partir de la configuración y el código, o validarla en CI.
+- No copiar documentación de un repositorio a otro como plantilla sin reescribirla.
+- Cuando el código y la documentación se contradicen, manda el código y se corrige la documentación en el mismo cambio.
+- Para librerías y repositorios que van a tocar agentes, mantener un `AGENTS.md` con invariantes, trampas conocidas y qué no tocar sin coordinar (ver `shared/knowledge/agent-workflow.md`).
+
+## Buenas prácticas de escritura
+
+- Escribir para tres lectores: quien mantiene el modelo (metodología), quien lo usa (impacto y umbral) y quien lo audita (trazabilidad).
+- Cada número en la documentación indica de qué partición sale.
+- Las limitaciones se escriben de forma explícita: población no cubierta, sesgo de selección, variables con riesgo de dejar de existir.
+- Incluir fecha, versión del modelo y versión de los datos.

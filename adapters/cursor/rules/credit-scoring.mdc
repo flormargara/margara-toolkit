@@ -1,40 +1,32 @@
 ---
-description: Metodología y guardrails para scores de riesgo crediticio y modelos de cobranzas (target de default, universo y particiones out-of-time, leakage, WoE/IV, estabilidad, calibración, ratings, PSI, sesgo de selección, grupo de control, trazabilidad).
+description: Metodología específica para scores de riesgo crediticio y modelos de cobranzas (definición de default y roll rate, ventana de desempeño, WoE/IV, PD, ratings, punto de corte, reject inference, grupo de control en cobranzas). Se usa junto con ml-foundations.mdc.
 globs: ["**/*.py", "**/*.ipynb", "**/*.sql"]
 alwaysApply: false
 ---
 
 # Scores de riesgo crediticio y cobranzas
 
-## Reglas que no se negocian
+Aplican todas las reglas de `ml-foundations.mdc`. Además:
 
-- La validación final es out-of-time. Un split aleatorio solo sirve dentro de train, para tunear.
-- Ninguna variable posterior al punto de decisión: desempeño del propio préstamo (mora, atraso, castigo, refinanciación), variables de proceso (fecha o monto de desembolso, oferta final, analista) ni gestiones del episodio actual de mora.
-- Elegibilidad idéntica en train, validación y scoring.
-- Binning, WoE, imputación, escalado, selección de variables y sampling se ajustan solo con train.
-- La misma persona nunca aparece en dos particiones; sin cohortes inmaduras.
-- El conjunto que decide el veredicto se mira una vez; el early stopping y la búsqueda usan otro conjunto dentro de train.
-- Baselines siempre (ingenuo, regla, modelo sin tunear) y experimentos de un solo cambio.
-- AUC > 0.90, IV > 0.5 o una variable dominante se tratan como sospecha de leakage.
-- Si el score se rebalanceó y se usa como probabilidad, se recalibra.
-- Si la acción cambia el resultado (cobranzas, límites), el modelo se entrena y evalúa solo con el grupo de control.
-- Un modelo nuevo reemplaza al vigente solo por un margen mínimo y sin empeorar la calibración por rating.
+## Reglas de crédito
+
+- El default se define con análisis de roll rate y se acuerda con riesgo.
+- Ninguna cohorte entra al universo sin haber cumplido la ventana de desempeño.
+- Ninguna variable posterior a la solicitud: desempeño del propio préstamo (mora, atraso, castigo, refinanciación), variables de proceso (fecha o monto de desembolso, oferta final, analista), buró consultado después de la evaluación ni gestiones del episodio actual de mora.
+- AUC > 0.90 o IV > 0.5 se tratan como sospecha de leakage.
+- Siempre un baseline de regresión logística sobre WoE y otro con la política de riesgo vigente.
+- Se registra el score de todos los solicitantes, incluidos los rechazados por reglas.
+- Ratings validados en una segunda muestra con error de calibración por rating acotado.
 - Sin variables sensibles como features; revisar proxies.
-- El punto de corte lo decide el dueño del riesgo; el modelo entrega la tabla de opciones.
-- Si el código y la documentación se contradicen, seguir el código y avisar.
+- El punto de corte lo decide el dueño del riesgo.
+- En cobranzas, el modelo se entrena y evalúa solo con el grupo de control.
 
-## Chequeos
+## Leakage
 
-Todos en `~/projects/margara-toolkit/domains/credit-scoring/checks/`:
-
-- Universo: `python3 check_universe.py universo.csv --horizon-days N --last-data-date AAAA-MM-DD --id-col <id>`
-- Leakage: `python3 check_leakage.py --features lista.txt` (usa `forbidden_columns.txt` de la raíz del proyecto)
-- Concentración: `python3 check_concentration.py importancias.csv`
-- PSI/CSI: `python3 psi.py ref.csv act.csv --column score`
+Lista de patrones de crédito y cobranzas: `~/projects/margara-toolkit/domains/credit-scoring/checks/forbidden_columns.example.txt`. Combinarla con la genérica en el `forbidden_columns.txt` del proyecto.
 
 ## Referencias
 
-- Scoring: `~/projects/margara-toolkit/domains/credit-scoring/knowledge/` (00-flujo.md es el índice).
+- Scoring: `~/projects/margara-toolkit/domains/credit-scoring/knowledge/` (00-flujo.md es el índice y apunta a la parte general de cada etapa).
 - Cobranzas: `~/projects/margara-toolkit/domains/collections/knowledge/`.
-- Forma de trabajar con agentes: `~/projects/margara-toolkit/shared/knowledge/agent-workflow.md`.
 - Plantillas: `.../credit-scoring/templates/` y `.../collections/templates/`.

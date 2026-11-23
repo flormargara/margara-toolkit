@@ -1,6 +1,8 @@
-# Trazabilidad
+# Trazabilidad en crédito
 
-Sin poder reconstruir qué evaluación generó qué oferta, qué oferta terminó en qué desembolso y cómo pagó ese desembolso, no se puede hacer backtest, medir el modelo en producción ni entrenar la versión siguiente. La trazabilidad es un requisito previo del modelado, no una tarea de datos aparte.
+Aplica todo `ml-foundations/knowledge/08-trazabilidad.md`: claves únicas en cada salto, qué registrar en cada predicción y la trazabilidad medida como indicador. Acá está la cadena concreta de crédito.
+
+Sin poder reconstruir qué evaluación generó qué oferta, qué oferta terminó en qué desembolso y cómo pagó ese desembolso, no se puede hacer backtest, medir el score en producción ni entrenar la versión siguiente.
 
 ## La cadena
 
@@ -25,17 +27,6 @@ Cada salto necesita una **clave única y estable** que esté en ambos lados. Pro
 - Resultado de cada regla y motivo de rechazo.
 - Identificadores de las consultas a burós usadas.
 - El score de todos los solicitantes, incluidos los rechazados por reglas (ver `06-sesgo-seleccion.md`).
-
-## Medir la trazabilidad como un indicador
-
-Para cada salto, calcular qué porcentaje de registros encuentra su par en la tabla siguiente, por mes y por producto. Publicarlo como indicador de calidad con un umbral, y tratar una caída como un incidente.
-
-Ante un problema, documentar:
-
-- Período y volumen afectado.
-- Si la corrección es retroactiva o solo hacia adelante.
-- Quién lo detecta, quién lo corrige y por qué canal se notifica.
-- Qué modelos, tableros o análisis quedan invalidados mientras tanto.
 
 ## Consecuencia práctica para un proyecto de scoring
 

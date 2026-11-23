@@ -1,5 +1,7 @@
 # Ficha del modelo — [nombre] v[versión]
 
+> Versión de crédito de la plantilla genérica de `ml-foundations/templates/`. Incluye todos sus puntos más los específicos de riesgo crediticio.
+
 | Campo | Valor |
 |---|---|
 | Dueño | |

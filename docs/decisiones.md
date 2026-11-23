@@ -2,6 +2,18 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-23 — Separar lo genérico de ML en `ml-foundations`
+
+**Decisión:** crear el dominio `ml-foundations` con las prácticas de ML supervisado que no dependen del dominio (universo y particiones, leakage, features, modelado, población y sesgo, monitoreo, experimentación, trazabilidad, documentación), los chequeos genéricos y plantillas genéricas, más la skill `ml-practices`. `credit-scoring` queda solo con lo específico de crédito y cada archivo apunta al general que aplica.
+
+**Por qué:** más de la mitad de lo que estaba en `credit-scoring` era ML genérico con ejemplos de crédito. Separarlo permite usarlo en cualquier proyecto y evita duplicarlo en cada dominio nuevo.
+
+**Cómo se apilan:** `credit-scoring` se apoya en `ml-foundations`; `collections` en ambos. Las referencias entre dominios usan la forma `<dominio>/knowledge/<archivo>`, y las skills enlazan dominios completos para que esas rutas funcionen igual dentro de la skill.
+
+**Chequeos:** los cuatro scripts pasan a `ml-foundations/checks/`. `check_leakage.py` es el motor genérico; cada dominio aporta su lista de patrones (`credit-scoring/checks/forbidden_columns.example.txt`).
+
+**No se separó en otro repo:** un dominio dentro del toolkit evita que credit-scoring dependa de un repositorio externo y mantiene una sola instalación.
+
 ## 2026-11-23 — Ampliación de la metodología y dominio de cobranzas
 
 **Decisión:** ampliar seis archivos de conocimiento de credit-scoring, sumar ratings, experimentación y trazabilidad, crear el dominio `collections`, sumar `shared/knowledge/agent-workflow.md` y dos chequeos nuevos (`check_universe.py`, `check_concentration.py`).

@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/projects/margara-toolkit/domains/credit-scoring/checks/check_leakage.py\" --hook --include 'src/**' --include 'notebooks/**' --include 'sql/**'"
+            "command": "python3 \"$HOME/projects/margara-toolkit/domains/ml-foundations/checks/check_leakage.py\" --hook --include 'src/**' --include 'notebooks/**' --include 'sql/**'"
           }
         ]
       }

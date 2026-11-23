@@ -1,0 +1,23 @@
+# Patrones de columnas prohibidas como features (expresiones regulares, una por línea).
+# Este archivo es genérico. Cada dominio tiene su propia lista (por ejemplo,
+# domains/credit-scoring/checks/forbidden_columns.example.txt).
+#
+# Copiar como forbidden_columns.txt en la raíz de cada proyecto, combinar con la
+# lista del dominio y ajustar a los nombres reales de las columnas.
+# Se comparan sin distinguir mayúsculas/minúsculas contra nombres de columnas y código.
+#
+# Para permitir un uso legítimo (por ejemplo, la construcción del target), agregar
+# el comentario "leakage-ok" en esa misma línea del código.
+
+# Target y derivados
+\btarget\w*_(mean|enc\w*|rate)
+\blabel_\w+
+\by_true\b
+
+# Información posterior al momento de la predicción
+\w*_futur[oa]s?\b
+\w*_future\b
+\w*_post_\w+
+\bresultado_final\w*
+\bestado_final\w*
+\boutcome\w*

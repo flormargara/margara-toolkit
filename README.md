@@ -28,18 +28,23 @@ docs/           decisiones y su porqué
 
 | Dominio | Pieza | Qué hace | Cuándo usarla |
 |---|---|---|---|
-| credit-scoring | `knowledge/` | Metodología para scores de riesgo crediticio en 13 etapas: trazabilidad, target, universo, leakage, features, modelado, sesgo de selección, monitoreo, equidad, documentación, ratings y experimentación | Al diseñar, entrenar, validar, desplegar o monitorear un score |
-| credit-scoring | `checks/check_universe.py` | Integridad temporal del universo: orden, horizonte, madurez, entidades repetidas, duplicados | Antes de entrenar |
-| credit-scoring | `checks/check_leakage.py` | Detecta columnas prohibidas (posteriores a la decisión) en código o listas de features | Hook después de editar código, y antes de reportar métricas |
-| credit-scoring | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
-| credit-scoring | `checks/psi.py` | PSI/CSI entre dos muestras | Validación out-of-time y monitoreo |
-| credit-scoring | `templates/` | Checklist de validación y ficha del modelo | Antes de dar un modelo por terminado |
+| ml-foundations | `knowledge/` | Prácticas de ML supervisado con datos en el tiempo, en 10 etapas: problem framing, universo y particiones, leakage, features, modelado, población y sesgo, monitoreo, experimentación, trazabilidad y documentación | En cualquier proyecto de modelado |
+| ml-foundations | `checks/check_universe.py` | Integridad temporal del universo: orden, horizonte, madurez, entidades repetidas, duplicados | Antes de entrenar |
+| ml-foundations | `checks/check_leakage.py` | Detecta columnas prohibidas en código o listas de features (la lista de patrones la pone cada dominio) | Hook después de editar código, y antes de reportar métricas |
+| ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
+| ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
+| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas | Antes de dar un modelo por terminado |
+| credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
+| credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |
+| credit-scoring | `templates/` | Ficha y checklist de crédito (extienden las genéricas) | Antes de dar un score por terminado |
 | collections | `knowledge/` | Modelos de cobranzas: problem framing, entrenamiento solo con grupo de control, target de pase de tramo y autocura, leakage propio, métricas de impacto y costo | Al construir o revisar un modelo de mora o cobranzas |
 | collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
 | productividad | `cv-con-evidencia/` | Base personal de experiencia confirmada; CVs adaptados a ofertas, auditoría de CVs y textos de postulación | Al armar o actualizar un CV o postularse a un puesto |
 | shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
 
-Skills en `adapters/claude/skills/`: `credit-scoring-ml`, `collections-ml` y `cv-con-evidencia`. Todas apuntan con enlaces simbólicos al contenido de `domains/` y `shared/`, así cada archivo existe una sola vez.
+Los dominios se apilan: `credit-scoring` se apoya en `ml-foundations`, y `collections` en ambos. Cada archivo de un dominio específico empieza diciendo qué archivo general aplica.
+
+Skills en `adapters/claude/skills/`: `ml-practices`, `credit-scoring-ml`, `collections-ml` y `cv-con-evidencia`. Todas apuntan con enlaces simbólicos al contenido de `domains/` y `shared/`, así cada archivo existe una sola vez.
 
 ## Instalación
 
@@ -55,8 +60,8 @@ Los hooks no se instalan solos: copiar el bloque que corresponda de `adapters/cl
 
 ## Uso en un proyecto
 
-- **Claude Code:** las skills quedan disponibles en todos los proyectos tras instalarlas. La regla `adapters/claude/rules/credit-scoring-guardrails.md` se copia a `.claude/rules/` del proyecto.
-- **Cursor:** copiar `adapters/cursor/rules/*.mdc` a `.cursor/rules/` del proyecto.
+- **Claude Code:** las skills quedan disponibles en todos los proyectos tras instalarlas. Las reglas de `adapters/claude/rules/` se copian a `.claude/rules/` del proyecto: `ml-guardrails.md` en cualquier proyecto de ML, y además `credit-scoring-guardrails.md` en uno de crédito.
+- **Cursor:** copiar a `.cursor/rules/` del proyecto `ml-foundations.mdc` y, si es de crédito, también `credit-scoring.mdc`.
 - **Otras herramientas:** apuntar a `adapters/AGENTS.md` o copiarlo como `AGENTS.md` del proyecto.
 
 ## Cómo crece este repo

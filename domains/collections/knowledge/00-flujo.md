@@ -2,7 +2,7 @@
 
 Un modelo de cobranzas no predice quién va a pagar en abstracto: decide **a quién gestionar, cuándo y por qué canal**, sobre cuentas que ya están en mora. Eso cambia tres cosas respecto de un score de originación: el resultado depende de la acción tomada, el horizonte es corto y el costo de gestión es parte del problema.
 
-Este dominio complementa a `credit-scoring`: target, particiones, leakage, features, ratings y monitoreo siguen las mismas reglas (`domains/credit-scoring/knowledge/`). Acá está lo específico.
+Este dominio se apoya en `ml-foundations` (universo, particiones, leakage, features, modelado, monitoreo, experimentación) y en `credit-scoring` (definición de default, ratings, variables de crédito). Leer los archivos generales de cada etapa y acá lo específico de cobranzas.
 
 ## Etapas
 
@@ -51,7 +51,7 @@ Responder por escrito:
 Es la regla central del dominio. Una vez que el modelo decide a quién se gestiona, el resultado de las cuentas tratadas refleja la gestión y no el riesgo original. Si el modelo se reentrena con esos casos, aprende de su propio efecto y con el tiempo subestima el riesgo de los segmentos mejor gestionados.
 
 - El reentrenamiento usa **solo cuentas del grupo de control**, cuyo resultado no está afectado por la gestión guiada por el modelo.
-- Por eso el control tiene que ser lo bastante grande en cada rating para alimentar el reentrenamiento, no solo para medir impacto. Revisar el tamaño con este doble objetivo (ver `domains/credit-scoring/knowledge/11-experimentacion.md`).
+- Por eso el control tiene que ser lo bastante grande en cada rating para alimentar el reentrenamiento, no solo para medir impacto. Revisar el tamaño con este doble objetivo (ver `ml-foundations/knowledge/07-experimentacion.md`).
 - Antes de que exista un control propio, el primer modelo se entrena con la historia previa al modelo y se documenta qué gestión recibieron esas cuentas.
 
 ## Grupo de control
@@ -78,6 +78,6 @@ Evitar métricas mal nombradas: el cociente "tasa de agravamiento del control / 
 ## Operación
 
 - **Inferencia diaria** en días hábiles, a una hora fija compatible con la operación de cobranzas.
-- **Entrenamiento y monitoreo mensuales**, con el reentrenamiento sujeto a la regla champion / challenger / recalibrado (ver `domains/credit-scoring/knowledge/07-estabilidad-monitoreo.md`).
+- **Entrenamiento y monitoreo mensuales**, con el reentrenamiento sujeto a la regla champion / challenger / recalibrado (ver `ml-foundations/knowledge/06-monitoreo.md`).
 - **Integración con la operación** (archivo, API o tabla): alertas ante dataset vacío, caída de volumen, fallas de lectura, discrepancias en joins o fallas de envío, con un procedimiento de reenvío.
 - **Tablero mensual** que cruce la salida del modelo con las gestiones realizadas y su costo, con fechas de actualización y ventanas definidas.

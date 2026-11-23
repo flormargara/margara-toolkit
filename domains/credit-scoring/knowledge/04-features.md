@@ -1,28 +1,18 @@
-# Features
+# Features en crédito: WoE, IV y binning
 
-## Chequeo de datos antes de construir variables
-
-- Verificar cada fuente contra lo pedido: cantidad de registros, duplicados por clave, que los joins no pierdan ni multipliquen filas.
-- Para cada campo continuo, un resumen de ocho números: faltantes, mínimo, p1, Q1, mediana, Q3, p99, máximo.
-- Que cada código tenga definición y que las distribuciones tengan sentido de negocio.
-
-## Faltantes, ceros y extremos
-
-- **La semántica del faltante depende de la variable.** Contadores y montos faltantes suelen significar "no hubo" y van a 0. Edades, porcentajes y ratios faltantes son faltantes de verdad y se tratan como categoría propia.
-- **Población mínima.** Eliminar variables con menos de 2-3% de valores informados (no faltantes, no cero, no valor por defecto), salvo excepción justificada.
-- **Capping en p99 y flooring en p1** para variables continuas (el flooring, sobre todo para ratios y variables que pueden ser negativas). Los percentiles se calculan con train.
+Aplica todo `ml-foundations/knowledge/03-features.md`: semántica de faltantes, capping, estabilidad por período, embudo de selección, SHAP y concentración. Acá está lo propio de los scores interpretables de crédito.
 
 ## Binning y WoE
 
-En scores interpretables (regresión logística sobre WoE) el binning es parte del modelo.
+En scores interpretables (regresión logística sobre WoE) el binning es parte del modelo. El WoE de un bin es el logaritmo del cociente entre la proporción de buenos y la de malos en ese bin.
 
 - Bins con al menos 5% de la población y una cantidad mínima de malos (por ejemplo 30) para que el WoE sea estable.
-- **Monotonicidad:** el riesgo debe moverse en la dirección que el negocio espera. Si el binning óptimo no es monótono, revisarlo: suele ser ruido o un problema de datos. Las excepciones (relaciones en U) se justifican por escrito.
-- Agrupaciones intuitivas antes que puramente estadísticas: el 0 en un bin propio, faltantes como bin propio, valores especiales (por ejemplo −999) separados.
+- **Monotonicidad:** el riesgo debe moverse en la dirección que el negocio espera (más ingresos, menos riesgo). Si el binning óptimo no es monótono, revisarlo: suele ser ruido o un problema de datos. Las excepciones (relaciones en U) se justifican por escrito.
+- Agrupaciones intuitivas antes que puramente estadísticas: el 0 en un bin propio, faltantes como bin propio, valores especiales separados.
 - Se pueden unir bins o categorías con WoE muy parecido.
-- Ajustar los cortes solo con train y, si el target es binario con indeterminados, usar solo buenos y malos.
+- Ajustar los cortes solo con train y, si hay indeterminados, usar solo buenos y malos.
 
-## Information Value (IV) como guía
+## Information Value (IV)
 
 | IV | Lectura |
 |---|---|
@@ -32,39 +22,25 @@ En scores interpretables (regresión logística sobre WoE) el binning es parte d
 | 0.30 – 0.50 | Fuerte |
 | > 0.50 | Sospechoso: revisar leakage (`03-leakage.md`) |
 
-El IV mide poder individual; no reemplaza la selección multivariada.
+- El IV mide poder individual; no reemplaza la selección multivariada.
+- En el filtro de estabilidad por período (ver `ml-foundations/knowledge/03-features.md`), el "poder predictivo en rango" se mide con el IV de cada período: entre 0.02 y 0.5.
+- Las variables con IV extremadamente alto pueden anular la contribución de las demás; requieren atención especial.
 
-## Estabilidad por período
+## Regresión logística sobre WoE
 
-Una variable sirve si es predictiva **y** estable en el tiempo. Los filtros se evalúan período a período (por ejemplo por mes de snapshot), no solo sobre la muestra total, y la inestabilidad se acumula dando más peso a los períodos recientes:
+- Coeficientes con el mismo signo y coherentes con el sentido de negocio. Un signo invertido indica colinealidad o un problema de datos.
+- VIF < 2 como guía; justificar las excepciones.
+- No descartar automáticamente variables con p-valor > 0.05 si tienen sentido de negocio; documentar el criterio.
+- Seleccionar por grupo de fuentes (buró, comportamiento interno, datos de la solicitud) para que el score no dependa de una sola.
 
-| Filtro | Falla en un período si… |
+## Fuentes de variables habituales
+
+| Fuente | Ejemplos |
 |---|---|
-| Nulos | La proporción de nulos supera el umbral (por ejemplo 30%) |
-| Concentración | Más del 99% de los valores están en la moda |
-| Variabilidad | El coeficiente de variación (numéricas) o la entropía normalizada (categóricas) es muy bajo |
-| Estabilidad de distribución | PSI, cambio de media o categorías nuevas superan el umbral |
-| IV en rango | El IV del período cae debajo de 0.02 o supera 0.5 |
-| Relación con el target | El AUC univariado se aleja de la historia más de un delta (por ejemplo 0.05), o **la dirección de la relación se invierte** |
-| Correlación estable | Dos variables están muy correlacionadas (φk > 0.9) de forma estable; se conserva una |
+| Buró y central de riesgos | Deuda total y por entidad, peor situación, consultas recientes, antigüedad en el sistema |
+| Comportamiento interno | Pagos y atrasos en productos propios, utilización de la tarjeta, saldos y movimientos de cuentas |
+| Ingresos | Declarados, estimados por modelo o inferidos de acreditaciones |
+| Solicitud | Producto, monto, plazo, canal (cuidado: algunos son decisiones de la entidad) |
+| Datos alternativos | Transaccionales y de otras empresas del grupo, útiles para new to credit |
 
-## Selección de variables
-
-- Documentar el **embudo** con la cantidad que sobrevive a cada paso: candidatas → filtro manual de leakage → nulos → varianza → estabilidad → correlación → selección multivariada (Boruta/SHAP, eliminación recursiva) → finales. Va en la ficha del modelo.
-- Eliminar variables no disponibles en producción.
-- Controlar colinealidad (correlación entre WoE, VIF). En regresión logística, apuntar a VIF < 2 y justificar las excepciones. Entre dos variables muy correlacionadas, quedarse con la más estable y explicable.
-- En regresión logística, los coeficientes sobre WoE deben tener todos el mismo signo y coincidir con el sentido de negocio. Un signo invertido indica colinealidad o un problema de datos.
-- Preferir 10 a 20 variables bien entendidas a 100 variables marginales. Seleccionar por grupo de fuentes ayuda a que el modelo no dependa de una sola.
-
-## Modelos de árboles (GBM)
-
-- Imponer restricciones de monotonicidad cuando la dirección del riesgo es conocida.
-- No depender de la importancia de variables nativa: usar SHAP para explicar y para revisar que las variables top sean legítimas.
-- Revisar la **concentración de la importancia**: si una variable explica una fracción muy grande del modelo, es frágil y es una señal de leakage (`checks/check_concentration.py`).
-- Revisar estabilidad de las contribuciones en el tiempo, no solo la importancia promedio.
-
-## Variables que requieren cuidado especial
-
-- **Variables sensibles y sus proxies** (ver `08-equidad-regulacion.md`).
-- **Variables construidas por la política vigente** (por ejemplo, un score anterior): heredan su sesgo y pueden dejar de existir.
-- **Variables declaradas por el solicitante** (ingresos, ocupación): pueden manipularse una vez que se sabe que importan.
+Las variables declaradas por el solicitante (ingresos, ocupación) pueden manipularse una vez que se sabe que importan.

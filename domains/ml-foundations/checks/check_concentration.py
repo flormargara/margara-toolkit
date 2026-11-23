@@ -95,7 +95,7 @@ def main() -> int:
         print("\n❌ Concentración excesiva:", file=sys.stderr)
         for f in failures:
             print(f"  - {f}", file=sys.stderr)
-        print("Revisar leakage en las variables principales (03-leakage.md) antes de aceptar el modelo.", file=sys.stderr)
+        print("Revisar leakage en las variables principales (ml-foundations/knowledge/02-leakage.md) antes de aceptar el modelo.", file=sys.stderr)
         return 1
     print("\n✅ Concentración dentro de los umbrales")
     return 0

@@ -1,5 +1,7 @@
 # Checklist de validación — [nombre del modelo] v[versión]
 
+> Versión de crédito de la plantilla genérica de `ml-foundations/templates/`. Incluye todos sus puntos más los específicos de riesgo crediticio.
+
 Marcar cada punto. Si un punto no aplica o no se cumple, dejarlo sin marcar y escribir la excepción con su justificación debajo.
 
 ## Trazabilidad

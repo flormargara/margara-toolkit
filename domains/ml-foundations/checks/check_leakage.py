@@ -9,7 +9,8 @@ Usos:
                                                      archivo editado
 
 Patrones: --patterns <archivo>, o forbidden_columns.txt en la raíz del proyecto,
-o el ejemplo de este directorio como último recurso.
+o el ejemplo genérico de este directorio como último recurso (cada dominio
+tiene su propia lista de ejemplo, por ejemplo domains/credit-scoring/checks/).
 
 Salida: 0 sin hallazgos; 1 con hallazgos; en modo hook, 2 con hallazgos (el
 agente recibe el mensaje por stderr y debe corregir o justificar).
