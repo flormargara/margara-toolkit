@@ -49,12 +49,11 @@ docs/           decisiones y su porqué
 | collections | `checks/check_training_population.py` | Entrenamiento y evaluación solo con control desde el inicio del modelo; autocura solo sin gestión | Antes de entrenar o reentrenar |
 | collections | `checks/check_control_group.py` | Control persistente, proporción por rating y tamaño suficiente para reentrenar | Al diseñar el piloto y en cada reentrenamiento |
 | collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
-| productividad | `cv-con-evidencia/` | Base personal de experiencia confirmada; CVs adaptados a ofertas, auditoría de CVs y textos de postulación | Al armar o actualizar un CV o postularse a un puesto |
 | shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
 
 Los dominios se apilan: `credit-scoring` se apoya en `ml-foundations`, y `collections` en ambos. Cada archivo de un dominio específico empieza diciendo qué archivo general aplica.
 
-Skills en `adapters/claude/skills/`: `ml-practices`, `credit-scoring-ml`, `collections-ml` y `cv-con-evidencia`. Todas apuntan con enlaces simbólicos al contenido de `domains/` y `shared/`, así cada archivo existe una sola vez.
+Skills en `adapters/claude/skills/`: `ml-practices`, `credit-scoring-ml` y `collections-ml`. Todas apuntan con enlaces simbólicos al contenido de `domains/` y `shared/`, así cada archivo existe una sola vez.
 
 ## Instalación
 

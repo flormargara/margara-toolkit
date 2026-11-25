@@ -1,6 +1,6 @@
 # Adaptador para ai-mllc
 
-ai-mllc conduce el proceso de una iniciativa de modelado: guarda el estado, asigna una skill a cada etapa y no deja cerrar una etapa sin una decisión del Data Scientist. Su núcleo no trae reglas metodológicas: cada proyecto las carga en un catálogo de golden rules. Este adaptador genera ese catálogo desde el toolkit, para que ai-mllc haga cumplir las prácticas y los chequeos de `domains/` sin reescribirlos.
+ai-mllc (`~/projects/ai-mllc`, repo propio desde que el equipo que lo armó dejó de existir) conduce el proceso de una iniciativa de modelado: guarda el estado, asigna una skill a cada etapa y no deja cerrar una etapa sin una decisión del Data Scientist. Su núcleo no trae reglas metodológicas: cada proyecto las carga en un catálogo de golden rules. Este adaptador genera ese catálogo desde el toolkit, para que ai-mllc haga cumplir las prácticas y los chequeos de `domains/` sin reescribirlos.
 
 | Capa | Quién la pone |
 |---|---|
@@ -11,10 +11,10 @@ ai-mllc conduce el proceso de una iniciativa de modelado: guarda el estado, asig
 ## Generar el catálogo
 
 ```bash
-python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations --out .cursor/mllc-golden-rules.md
+python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations --out .claude/mllc-golden-rules.md
 ```
 
-- La carpeta es la de configuración de ai-mllc en el proyecto: `.cursor/`, `.kiro/` o `.github/`.
+- La carpeta es la de configuración de ai-mllc en el proyecto: `.claude/` en Claude Code (`.cursor/`, `.kiro/` o `.github/` en las otras herramientas).
 - Si el bootstrap de ai-mllc ya sembró un catálogo de referencia, reemplazarlo con `--force`. Sus tres reglas de referencia ya están incluidas en el catálogo del toolkit.
 - `--check` valida todos los catálogos sin escribir nada. El formato que valida es el mismo que exige el núcleo de ai-mllc.
 - Hoy hay catálogo para `ml-foundations`. Los de `credit-scoring` y `collections` se agregan como `golden-rules/<dominio>.md` y se componen en orden: `compose.py ml-foundations credit-scoring`.
@@ -30,7 +30,7 @@ Cada regla declara fuerza, etapa, mecanismo y estado (ver `shared/knowledge/agen
 El resultado se registra con el comando de ai-mllc:
 
 ```bash
-mllc-core evaluate-golden-rule --config-dir .cursor --result-id <id> \
+mllc-core evaluate-golden-rule --config-dir .claude --result-id <id> \
   --rule-id ml-integridad-del-dataset --rule-version 1 \
   --mechanism check_determinista --outcome no_cumple --expected-last-seq <seq>
 ```
@@ -54,8 +54,9 @@ Una regla `active` y bloqueante con `no_cumple` o `evidencia_insuficiente` manti
 Las skills de ai-mllc ejecutan cada etapa; las del toolkit aportan el criterio. Para que una etapa pueda consultarlas:
 
 1. Enlazar la skill en la carpeta de skills del harness del proyecto, por ejemplo:
-   `ln -s ~/.agents/skills/ml-practices .cursor/skills/ml-practices`
-2. Agregarla a `support` en los bindings de la etapa (`.cursor/mllc-bindings.json`), sin cambiar la skill nuclear:
+   `ln -s ~/.agents/skills/ml-practices .claude/skills/ml-practices`
+   Aunque la skill ya esté instalada globalmente, `mllc-core` solo acepta en un binding skills que estén en la carpeta del proyecto.
+2. Agregarla a `support` en los bindings de la etapa (`.claude/mllc-bindings.json`), sin cambiar la skill nuclear:
 
 ```json
 {
@@ -77,6 +78,6 @@ Las restricciones transversales del proyecto van en la constitución local de ai
 
 ## Límites
 
-- ai-mllc tiene adaptadores para Cursor, Kiro y Copilot. En Claude Code no hay adaptador: se puede usar su CLI (`mllc-core`) a mano, y las skills y reglas del toolkit funcionan solas.
+- ai-mllc tiene adaptadores para Claude Code, Cursor, Kiro y Copilot. El de Claude Code se instala con `bash ~/projects/ai-mllc/adapters/claude/bootstrap.sh` desde la raíz del proyecto (ver `adapters/claude/README.md` en ai-mllc).
 - ai-mllc termina en modelado, con despliegue opcional. Monitoreo continuo, impacto y reentrenamiento siguen en el toolkit (`06`, `07`).
 - Las skills nucleares de ai-mllc traen parte de esta metodología escrita adentro. Si se contradicen con el toolkit, el criterio general vive acá; conviene que esas skills remitan al toolkit en lugar de repetirlo.

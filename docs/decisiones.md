@@ -2,6 +2,18 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-25 — ai-mllc como repo propio, con adaptador para Claude Code
+
+**Decisión:** ai-mllc vive en `~/projects/ai-mllc`, separado del toolkit, importado desde la copia del repo del equipo. Ahí se sumó `adapters/claude/`. El toolkit conserva solo `adapters/mllc/` (catálogo de golden rules y `compose.py`).
+
+**Por qué:** ai-mllc es otra herramienta (proceso, estado, etapas); el toolkit es criterio. El adaptador de una herramienta para Claude Code pertenece a esa herramienta, no al toolkit. El equipo y el repo original ya no existen, así que se mantiene como repo propio y privado.
+
+## 2026-11-25 — Se saca el dominio productividad
+
+**Decisión:** quitar `domains/productividad/cv-con-evidencia` y su skill del catálogo, por ahora.
+
+**Por qué:** el toolkit se concentra en ML y crédito. La skill queda en el historial de git; para recuperarla: `git checkout 91bcc38 -- domains/productividad adapters/claude/skills/cv-con-evidencia`.
+
 ## 2026-11-23 — Tests de los chequeos
 
 **Decisión:** sumar `tests/` con `unittest`, un archivo por dominio, que corre cada chequeo como un usuario (subproceso) y verifica el código de salida y el mensaje.

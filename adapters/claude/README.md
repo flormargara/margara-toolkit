@@ -5,7 +5,6 @@
 | `skills/ml-practices/` | `~/.agents/skills/` y `~/.claude/skills/` (global) | `./scripts/install.sh` |
 | `skills/credit-scoring-ml/` | Igual | `./scripts/install.sh` |
 | `skills/collections-ml/` | Igual | `./scripts/install.sh` |
-| `skills/cv-con-evidencia/` | Igual | `./scripts/install.sh` |
 | `rules/ml-guardrails.md` | `.claude/rules/` de cualquier proyecto de ML | Copiar al proyecto |
 | `rules/credit-scoring-guardrails.md` | `.claude/rules/` de un proyecto de crédito, junto con la anterior | Copiar al proyecto |
 | `settings.example.json` | `.claude/settings.json` del proyecto | Copiar el bloque `hooks` y ajustar los `--include` |
@@ -19,7 +18,6 @@ Cada carpeta de `skills/` contiene solo su `SKILL.md`. El resto son enlaces simb
 | `ml-practices` | `ml-foundations/` → dominio genérico de ML; `shared/` → flujo de trabajo con agentes |
 | `credit-scoring-ml` | `references/` → conocimiento de crédito; `templates/`; `checks/` → chequeos y lista de leakage de crédito; `ml-foundations/`; `shared/` |
 | `collections-ml` | `references/` → conocimiento de cobranzas; `templates/`; `checks/` → chequeos de cobranzas; `credit-scoring/` → dominio de crédito; `ml-foundations/` |
-| `cv-con-evidencia` | La carpeta completa de `domains/productividad/cv-con-evidencia` |
 
 ## El hook de leakage
 
