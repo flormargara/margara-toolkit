@@ -12,7 +12,7 @@ No avanzar a la etapa siguiente sin cerrar el punto de control de la actual: los
 | 1 | Problem framing | Hace falta ML; decisión, población, momento de la predicción, demora hasta la acción, costo de cada error, uso y fallback, forma de medir el impacto | Abajo |
 | 2 | Universo y particiones | Target perfilado por período (`target_profile.py`), grano, horizonte, esquema temporal; `check_universe.py` en verde | `01-universo-particiones.md` |
 | 3 | Leakage | Variables con su fecha de disponibilidad; `check_leakage.py` en verde | `02-leakage.md` |
-| 4 | Features | Faltantes, estabilidad por período, embudo de selección documentado separando selección sin target y predictiva | `03-features.md` |
+| 4 | Features | Ideas ancladas a fuentes verificadas y handoff (`templates/feature-handoff.md`); faltantes, estabilidad por período, embudo de selección documentado separando selección sin target y predictiva | `03-features.md` |
 | 5 | Dataset | Una receta para train, validación y scoring; `check_dataset.py` en verde; contrato del dataset | `03b-dataset.md` |
 | 6 | Modelado | Spec, baselines, leaderboard con ablaciones, búsqueda dentro de train, incertidumbre de cada métrica, calibración; `check_concentration.py` en verde | `04-modelado.md` |
 | 7 | Población | Población de entrenamiento vs. de predicción comparada; sesgo de selección documentado | `05-poblacion-y-sesgo.md` |

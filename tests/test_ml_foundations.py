@@ -14,6 +14,7 @@ DATASET = script("ml-foundations", "check_dataset.py")
 LEAKAGE = script("ml-foundations", "check_leakage.py")
 CONCENTRATION = script("ml-foundations", "check_concentration.py")
 PSI = script("ml-foundations", "psi.py")
+FEATURE_NAMES = script("ml-foundations", "check_feature_names.py")
 
 
 class TargetProfileTest(CheckTest):
@@ -167,6 +168,38 @@ class PsiTest(CheckTest):
     def test_columna_ausente(self):
         r = run(PSI, self.sample("ref.csv", 0), self.sample("act.csv", 0), "--column", "otra")
         self.assertFails(r, "no está en ambos archivos", code=2)
+
+
+class FeatureNamesTest(CheckTest):
+    VALID = "BUR_TAR_CNT_CONSULTAS_6M\nAPP_PRE_FLG_MORAMAYOR30_NO\nAPP_TAR_CAT_TIPOTARJETA_1M\n"
+
+    def test_nombres_validos_y_tipos(self):
+        out = self.tmp / "tipos.csv"
+        r = run(FEATURE_NAMES, self.text("f.txt", self.VALID), "--types-out", out)
+        self.assertPasses(r)
+        self.assertIn("1 numéricas, 1 categóricas, 1 banderas", r.stdout)
+        self.assertIn("APP_TAR_CAT_TIPOTARJETA_1M,categórica", out.read_text(encoding="utf-8"))
+
+    def test_tipo_por_segmento_no_por_substring(self):
+        # CAT dentro de la descripción no la vuelve categórica.
+        out = self.tmp / "tipos.csv"
+        r = run(FEATURE_NAMES, self.text("f.txt", "APP_TAR_CNT_CATALOGO_3M\n"), "--types-out", out)
+        self.assertPasses(r)
+        self.assertIn("APP_TAR_CNT_CATALOGO_3M,numérica", out.read_text(encoding="utf-8"))
+
+    def test_encabezado_de_csv_ignorando_claves(self):
+        path = self.csv("d.csv", ["id", "fecha_corte", "BUR_TAR_CNT_CONSULTAS_6M", "target"], [[1, "2025-01-31", 3, 0]])
+        self.assertPasses(run(FEATURE_NAMES, path, "--ignore", "id,fecha_corte,target"))
+
+    def test_formato_invalido(self):
+        names = "bur_tar_cnt_consultas_6m\nBUR_TAR_CONSULTAS_6M\nBUR_TAR_XYZ_CONSULTAS_6M\nBUR_TAR_CNT_CONSULTAS_HIST\nBUR_TAR_CNT_CONSULTAS_6M\nBUR_TAR_CNT_CONSULTAS_6M\n"
+        r = run(FEATURE_NAMES, self.text("f.txt", names))
+        self.assertFails(r, "mayúsculas", "4 segmentos", "'XYZ' no está en el catálogo", "'HIST' no es una ventana", "repetido")
+
+    def test_listas_del_proyecto_y_operaciones_extra(self):
+        path = self.text("f.txt", "BUR_TAR_RSI_CONSULTAS_6M\n")
+        self.assertFails(run(FEATURE_NAMES, path, "--extra-ops", "RSI", "--sources", "APP"), "fuente 'BUR' no está en la lista")
+        self.assertPasses(run(FEATURE_NAMES, path, "--extra-ops", "RSI", "--sources", "APP,BUR", "--domains", "TAR"))
 
 
 if __name__ == "__main__":

@@ -15,8 +15,8 @@ Seguir `ml-foundations/knowledge/00-flujo.md`. Al empezar una etapa, leer su arc
 |---|---|
 | ¿Hace falta ML?, problem framing, uso y respaldo | `ml-foundations/knowledge/00-flujo.md` |
 | Perfil del target, demora hasta la acción, universo, particiones, árbitro intacto | `ml-foundations/knowledge/01-universo-particiones.md` |
-| Leakage | `ml-foundations/knowledge/02-leakage.md` |
-| Features, faltantes, estabilidad por período, selección sin target y predictiva, embudo | `ml-foundations/knowledge/03-features.md` |
+| Leakage, observación vs. afirmación sobre los datos | `ml-foundations/knowledge/02-leakage.md` |
+| Features: ideación anclada a fuentes, fabricabilidad, estándar de nombres, faltantes, estabilidad por período, selección sin target y predictiva, embudo | `ml-foundations/knowledge/03-features.md` |
 | Dataset: una receta, contrato de bloques, gate de integridad | `ml-foundations/knowledge/03b-dataset.md` |
 | Spec, baselines, leaderboard, incertidumbre, búsqueda, métricas, calibración | `ml-foundations/knowledge/04-modelado.md` |
 | Población de entrenamiento vs. de predicción, sesgo de selección | `ml-foundations/knowledge/05-poblacion-y-sesgo.md` |
@@ -57,12 +57,14 @@ Están en `ml-foundations/checks/`. Correrlos antes de reportar métricas de un 
 | Integridad del dataset | `python3 ml-foundations/checks/check_dataset.py --split train=m_train.csv --split val=m_val.csv --universe train=u_train.csv --universe val=u_val.csv --id-col <id> --target-cols target` |
 | Leakage | `python3 ml-foundations/checks/check_leakage.py --features lista.txt` y sobre el código. Usa `forbidden_columns.txt` de la raíz del proyecto; si no existe, proponer crearlo desde `ml-foundations/checks/forbidden_columns.example.txt` más los nombres reales del proyecto |
 | Concentración de importancia | `python3 ml-foundations/checks/check_concentration.py importancias.csv` |
+| Nombres de features | `python3 ml-foundations/checks/check_feature_names.py lista.txt` (o el CSV del dataset con `--ignore` para claves y target) |
 | Estabilidad | `python3 ml-foundations/checks/psi.py ref.csv act.csv --column score`, o `--all-numeric` para CSI |
 
 ## Entregables
 
 Copiar al repositorio del proyecto (no editarlos acá):
 
+- En la etapa de features: `ml-foundations/templates/feature-handoff.md`.
 - Durante el modelado: `ml-foundations/templates/dataset-contract.md` y `ml-foundations/templates/leaderboard.md`.
 - Al cerrar el modelo: `ml-foundations/templates/model-card.md` y `ml-foundations/templates/checklist-validacion.md`.
 - Antes del despliegue: `ml-foundations/templates/ficha-impacto.md`.

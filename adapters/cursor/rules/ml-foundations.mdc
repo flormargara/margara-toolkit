@@ -33,6 +33,7 @@ Todos en `~/projects/margara-toolkit/domains/ml-foundations/checks/`:
 - Dataset: `python3 check_dataset.py --split train=m_train.csv --split val=m_val.csv --universe train=u_train.csv --universe val=u_val.csv --id-col <id>`
 - Leakage: `python3 check_leakage.py --features lista.txt` (usa `forbidden_columns.txt` de la raíz del proyecto)
 - Concentración: `python3 check_concentration.py importancias.csv`
+- Nombres de features: `python3 check_feature_names.py lista.txt`
 - PSI/CSI: `python3 psi.py ref.csv act.csv --column score`
 
 ## Referencias

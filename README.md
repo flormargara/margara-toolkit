@@ -37,7 +37,8 @@ docs/           decisiones y su porqué
 | ml-foundations | `checks/check_leakage.py` | Detecta columnas prohibidas en código o listas de features (la lista de patrones la pone cada dominio) | Hook después de editar código, y antes de reportar métricas |
 | ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
 | ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
-| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; contrato del dataset, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
+| ml-foundations | `checks/check_feature_names.py` | Nombres de features contra el estándar `FUENTE_DOMINIO_OPERACION_DESCRIPCION_VENTANA`; devuelve el tipo de cada una por su operación | Al cerrar la lista de features |
+| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; backlog y handoff de features, contrato del dataset, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
 | adapters | `mllc/` | Genera el catálogo de golden rules de ai-mllc desde los dominios del toolkit (`compose.py`) y explica cómo usar las skills del toolkit como soporte | En proyectos que usan ai-mllc |
 | credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
 | credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |

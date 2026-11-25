@@ -83,6 +83,33 @@ Correr `python3 check_leakage.py --features <lista_de_features.txt>` y sobre el 
 
 Cada variable candidata tiene en el diccionario su fuente, su fecha de disponibilidad respecto del momento de la predicción y si existe en producción. El significado de una columna se afirma con su procedencia; el nombre de la columna no alcanza. Ver `02-leakage.md`.
 
+## ml-ideas-ancladas-a-fuentes (v1)
+
+- fuerza: alerta
+- etapa: features
+- mecanismo: atestacion
+- estado: active
+
+Cada feature priorizada tiene en el handoff su mecanismo de negocio, una fuente verificada (tabla, columnas, grano, joins), su temporalidad respecto de la fecha de corte y la evidencia que la respaldó. Una idea sin fuente queda en el backlog como pendiente, no se prioriza. El universo y la fecha de corte acordados no se cambian para mejorar la cobertura. Ver `03-features.md`, "Ideación", y `templates/feature-handoff.md`.
+
+## ml-afirmacion-material-confirmada (v1)
+
+- fuerza: bloqueante
+- etapa: features
+- mecanismo: discusion
+- estado: active
+
+Una afirmación material sobre los datos (qué significa una columna, un código o un nulo; que dos tablas se relacionan) que cambia una fuente, un join, el universo, un filtro, una unidad o una moneda se confirma con el Data Scientist o con documentación del dueño de la fuente antes de usarla. Un nombre de columna, un tipo compatible o una tasa de match no alcanzan. Ver `02-leakage.md`, "Observación y afirmación".
+
+## ml-nombres-de-features (v1)
+
+- fuerza: sugerencia
+- etapa: features
+- mecanismo: check_determinista
+- estado: active
+
+Correr `python3 check_feature_names.py <lista_de_features.txt>` (o el CSV del dataset con `--ignore` para las claves y el target). Los nombres siguen `FUENTE_DOMINIO_OPERACION_DESCRIPCION_VENTANA` y el tipo de cada feature sale de su operación. Ver `03-features.md`, "Nombres".
+
 ## ml-seleccion-sin-target-en-features (v1)
 
 - fuerza: bloqueante
