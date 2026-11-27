@@ -59,12 +59,14 @@ Están en `ml-foundations/checks/`. Correrlos antes de reportar métricas de un 
 | Concentración de importancia | `python3 ml-foundations/checks/check_concentration.py importancias.csv` |
 | Nombres de features | `python3 ml-foundations/checks/check_feature_names.py lista.txt` (o el CSV del dataset con `--ignore` para claves y target) |
 | Estabilidad | `python3 ml-foundations/checks/psi.py ref.csv act.csv --column score`, o `--all-numeric` para CSI |
+| Promoción | `python3 ml-foundations/checks/promotion.py cohorte.csv --champion <col> --challenger <col> --recalibrated <col>` (con `--where grupo=control` si la acción cambia el resultado). Decide, no falla: la decisión se reporta tal cual |
 
 ## Entregables
 
 Copiar al repositorio del proyecto (no editarlos acá):
 
 - En la etapa de features: `ml-foundations/templates/feature-handoff.md`.
+- Antes del problem framing: `ml-foundations/templates/discovery.md`.
 - Antes del primer experimento: `ml-foundations/templates/modeling-spec.md`.
 - Durante el modelado: `ml-foundations/templates/dataset-contract.md` y `ml-foundations/templates/leaderboard.md`.
 - Al cerrar el modelo: `ml-foundations/templates/model-card.md` y `ml-foundations/templates/checklist-validacion.md`.

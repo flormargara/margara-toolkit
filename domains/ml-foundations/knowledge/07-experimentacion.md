@@ -31,6 +31,20 @@ Asignación persistente ("sticky"), por banda:
 - No nombrar "poder discriminante" a un cociente entre control y tratamiento: eso mide impacto.
 - Reportar el impacto también en términos de negocio: valor generado, costo de la acción, volumen.
 
+## Métricas de negocio desde el diseño
+
+Las métricas de ML (AUC, KS, error) dicen si el modelo ordena o acierta; las de negocio, si la decisión que toma mejora algo. Se definen por separado y antes de construir, no se deducen al final de las de ML.
+
+- **Cada banda o etiqueta tiene su accionable:** qué se hace con quien cae ahí (aprobar con límite alto, llamar en 48 horas, no contactar). Una banda sin acción asociada no necesita existir, y un corte que no cambia ninguna acción no se discute.
+- Para cada accionable: la métrica de negocio que mueve (tasa de recupero, pérdida, conversión, costo por gestión), su unidad y la dirección deseada.
+- Los tableros muestran las dos familias en secciones separadas: que mejore el AUC no dice que mejore el negocio, y al revés.
+
+| Banda | Accionable | Métrica de negocio | Dirección |
+|---|---|---|---|
+| Alto riesgo | Gestión temprana por teléfono | Tasa de regularización a 30 días | ↑ |
+| Riesgo medio | Recordatorio digital | Costo por cuenta regularizada | ↓ |
+| Bajo riesgo | Sin gestión (autocura) | Tasa de autocura | se mantiene |
+
 ## Ficha de impacto
 
 La performance técnica no dice cuánto valor genera el modelo. Cada implementación (dónde y cómo se usa el modelo) tiene una ficha de impacto (`templates/ficha-impacto.md`), armada en cinco capas:

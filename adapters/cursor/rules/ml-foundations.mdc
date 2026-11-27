@@ -35,6 +35,7 @@ Todos en `~/projects/margara-toolkit/domains/ml-foundations/checks/`:
 - Concentración: `python3 check_concentration.py importancias.csv`
 - Nombres de features: `python3 check_feature_names.py lista.txt`
 - PSI/CSI: `python3 psi.py ref.csv act.csv --column score`
+- Promoción: `python3 promotion.py cohorte.csv --champion <col> --challenger <col> --recalibrated <col>`
 
 ## Referencias
 

@@ -15,6 +15,7 @@ LEAKAGE = script("ml-foundations", "check_leakage.py")
 CONCENTRATION = script("ml-foundations", "check_concentration.py")
 PSI = script("ml-foundations", "psi.py")
 FEATURE_NAMES = script("ml-foundations", "check_feature_names.py")
+PROMOTION = script("ml-foundations", "promotion.py")
 
 
 class TargetProfileTest(CheckTest):
@@ -200,6 +201,68 @@ class FeatureNamesTest(CheckTest):
         path = self.text("f.txt", "BUR_TAR_RSI_CONSULTAS_6M\n")
         self.assertFails(run(FEATURE_NAMES, path, "--extra-ops", "RSI", "--sources", "APP"), "fuente 'BUR' no está en la lista")
         self.assertPasses(run(FEATURE_NAMES, path, "--extra-ops", "RSI", "--sources", "APP,BUR", "--domains", "TAR"))
+
+
+class PromotionTest(CheckTest):
+    """Cohorte sintética: la probabilidad real sale de una variable latente."""
+
+    def cohort(self, n=3000, seed=7, champion_noise=1.0, champion_scale=1.0,
+               challenger_noise=0.2, challenger_scale=1.0, extra=None):
+        import math
+        rng = random.Random(seed)
+        rows = []
+        for i in range(n):
+            z = rng.gauss(0, 1)
+            prob = 1 / (1 + math.exp(-(1.5 * z - 2)))
+            y = 1 if rng.random() < prob else 0
+            def score(noise, scale):
+                return min(0.999, scale / (1 + math.exp(-(1.5 * (z + rng.gauss(0, noise)) - 2))))
+            champ = score(champion_noise, champion_scale)
+            row = [i, y, f"{champ:.5f}", f"{score(challenger_noise, challenger_scale):.5f}",
+                   f"{champ / champion_scale:.5f}", "control" if i % 2 else "tratado"]
+            rows.append(row)
+        return self.csv("c.csv", ["id", "target", "v3", "v4", "v3_recal", "grupo"], rows)
+
+    def promote(self, path, *extra):
+        return run(PROMOTION, path, "--champion", "v3", "--challenger", "v4", "--n-boot", "100", *extra)
+
+    def test_challenger_claramente_mejor(self):
+        r = self.promote(self.cohort())
+        self.assertPasses(r)
+        self.assertIn("DECISIÓN: challenger", r.stdout)
+
+    def test_mejora_dentro_del_ruido_se_queda_el_champion(self):
+        r = self.promote(self.cohort(champion_noise=0.5, challenger_noise=0.5))
+        self.assertPasses(r)
+        self.assertIn("DECISIÓN: champion", r.stdout)
+
+    def test_recalibrado_gana_si_solo_cambio_el_nivel(self):
+        path = self.cohort(champion_noise=0.5, champion_scale=0.5, challenger_noise=0.5, challenger_scale=0.5)
+        r = self.promote(path, "--recalibrated", "v3_recal")
+        self.assertPasses(r)
+        self.assertIn("DECISIÓN: recalibrado", r.stdout)
+
+    def test_challenger_descalibrado_no_gana(self):
+        r = self.promote(self.cohort(challenger_scale=0.4))
+        self.assertPasses(r)
+        self.assertIn("empeora la calibración", r.stdout)
+        self.assertIn("DECISIÓN: champion", r.stdout)
+
+    def test_datos_insuficientes(self):
+        r = self.promote(self.cohort(n=120))
+        self.assertIn("DECISIÓN: champion — datos insuficientes", r.stdout)
+
+    def test_filtro_y_json(self):
+        out = self.tmp / "d.json"
+        r = self.promote(self.cohort(), "--where", "grupo=control", "--json", out)
+        self.assertPasses(r)
+        data = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(data["decision"], "challenger")
+        self.assertEqual(data["n"], 1500)
+
+    def test_columna_inexistente(self):
+        r = run(PROMOTION, self.cohort(), "--champion", "v3", "--challenger", "v9")
+        self.assertFails(r, "faltan columnas: v9", code=2)
 
 
 if __name__ == "__main__":

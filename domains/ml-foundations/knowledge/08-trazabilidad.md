@@ -17,6 +17,17 @@ Cada salto necesita una **clave única y estable** que esté en ambos lados. Pro
 - Deduplicaciones no deterministas (`row_number()` sobre una clave que no es única en una de las tablas), que hacen que la misma consulta devuelva resultados distintos.
 - Fechas con formato incorrecto en tablas de origen.
 
+### La cadena de consumo
+
+La cadena no termina en la tabla de predicciones. También es parte de la trazabilidad lo que pasa con la salida después:
+
+- **Quién la recibe:** sistema, proceso o equipo, y con qué identificador la toma.
+- **Por qué medio:** tabla, archivo, API, cola de mensajes; con su ubicación exacta.
+- **Qué pasa si la entrega falla:** si hay reintento o reenvío, si se avisa y a quién, y si el consumidor decide con la salida anterior o sin modelo.
+- **Confirmación de recepción:** cuántos registros se enviaron y cuántos se tomaron. Una diferencia es un salto roto de la cadena, igual que un join que pierde filas.
+
+Se documenta en la ficha del modelo ("Consumo y respaldo").
+
 ## Qué registrar en cada predicción
 
 - Identificadores de la entidad y del evento.

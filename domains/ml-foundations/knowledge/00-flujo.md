@@ -22,7 +22,7 @@ No avanzar a la etapa siguiente sin cerrar el punto de control de la actual: los
 
 ## ¿Hace falta ML?
 
-Antes del problem framing, tres preguntas. Si alguna da "no", el proyecto es otro:
+Antes del problem framing, tres preguntas (`templates/discovery.md` las junta con el resto del discovery). Si alguna da "no", el proyecto es otro:
 
 1. **¿Hay una decisión periódica y repetible que dependa de información disponible?** Si es un análisis puntual, alcanza con analítica o un tablero.
 2. **¿Una regla simple ya captura el valor?** Construir la regla (el baseline "regla" de `04-modelado.md`) y estimar cuánto valor agregaría un modelo sobre ella. Mirar el valor, no la cobertura: el resto que la regla no cubre puede concentrar la pérdida. Si la ganancia esperada no paga construir y mantener el modelo, quedarse con la regla y monitorearla.

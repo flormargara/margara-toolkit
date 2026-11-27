@@ -2,6 +2,18 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-26 — Prioridades B del relevamiento
+
+**Decisión:** sumar `promotion.py` a `ml-foundations/checks/`, `scripts/lint_skills.py` con sus tests, la plantilla `discovery.md`, métricas de negocio por banda (07), cadena de consumo (08), estándar de Python y cambios después de producción (09), y en `shared/` el diagnóstico con cadena de evidencia y la revisión adversarial de skills por perfil de riesgo.
+
+**`promotion.py` decide, no falla:** sale con 0 y devuelve champion, recalibrado o challenger; con datos insuficientes se queda el champion, como dice la regla. Por eso la regla `ml-regla-de-promocion` del catálogo de ai-mllc sigue como atestación y usa la salida del script como evidencia, sin cambiar de versión. Mide orden con AUC y calibración por deciles porque son comunes a cualquier clasificador binario; un dominio con otra métrica principal la compara aparte.
+
+**Margen o intervalo:** por defecto alcanza con uno de los dos, como en `06-monitoreo.md`; `--require both` exige ambos. El bootstrap es pareado (las mismas filas para los dos modelos), porque la diferencia entre modelos sobre la misma cohorte varía mucho menos que cada AUC por separado.
+
+**El lint corre en los tests:** `tests/test_toolkit.py` lo corre sobre el repo real, así una referencia rota se nota antes de commitear. Respeta dos convenciones del toolkit: los chequeos se nombran sin carpeta y los archivos de cada proyecto (`forbidden_columns.txt`, nombres en mayúsculas) no se buscan en el repo.
+
+**Ya estaban:** "reentrenar o versión nueva" (06) y las señales de alarma del discovery (00).
+
 ## 2026-11-26 — Prioridades M del relevamiento que eran texto
 
 **Decisión:** sumar `templates/modeling-spec.md`, el ancla entre documentación y código y el estándar de SQL en `09-documentacion.md`, y en `shared/knowledge/agent-workflow.md` la revisión en dos niveles y cómo escribir skills.

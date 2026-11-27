@@ -76,6 +76,19 @@ WITH solicitudes AS (
 SELECT ...
 ```
 
+## Estándar de Python
+
+- **Sin rutas absolutas** de una máquina: rutas relativas a la raíz del proyecto o tomadas de la configuración.
+- **Secretos fuera del código:** credenciales y tokens en variables de entorno o en el gestor de secretos, nunca en un notebook ni en un archivo versionado.
+- **La lógica vive en módulos `.py`;** el notebook solo importa, corre y muestra. Una función copiada en dos notebooks ya es una función de un módulo.
+- **El notebook corre de arriba a abajo** en un kernel nuevo; si depende del orden en que se ejecutaron las celdas, no es reproducible.
+- Parámetros (fechas, rutas, umbrales) en un solo lugar, al principio o en la configuración, no repartidos por el código.
+- Sin código muerto ni celdas comentadas "por si acaso": el historial de git las guarda.
+
+## Cambios después de producción
+
+Un cambio sobre un modelo que ya está en producción (corrección, recalibración, variable nueva, cambio de corte) se registra como un trabajo nuevo, enlazado al original, y no reabriendo el que lo llevó a producción. Así el original conserva qué se aprobó y desplegó, y el cambio tiene su propia aprobación, su versión y su entrada en el historial de la ficha.
+
 ## Buenas prácticas de escritura
 
 - Escribir para tres lectores: quien mantiene el modelo (metodología), quien lo usa (impacto y umbral) y quien lo audita (trazabilidad).

@@ -37,8 +37,9 @@ docs/           decisiones y su porqué
 | ml-foundations | `checks/check_leakage.py` | Detecta columnas prohibidas en código o listas de features (la lista de patrones la pone cada dominio) | Hook después de editar código, y antes de reportar métricas |
 | ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
 | ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
+| ml-foundations | `checks/promotion.py` | Regla de promoción: champion, recalibrado o challenger, con margen mínimo, intervalo bootstrap pareado de la diferencia de AUC y error de calibración | Antes de reemplazar el modelo vigente |
 | ml-foundations | `checks/check_feature_names.py` | Nombres de features contra el estándar `FUENTE_DOMINIO_OPERACION_DESCRIPCION_VENTANA`; devuelve el tipo de cada una por su operación | Al cerrar la lista de features |
-| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; backlog y handoff de features, contrato del dataset, spec del modelado, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
+| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; discovery, backlog y handoff de features, contrato del dataset, spec del modelado, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
 | adapters | `mllc/` | Genera el catálogo de golden rules de ai-mllc desde los dominios del toolkit (`compose.py`) y explica cómo usar las skills del toolkit como soporte | En proyectos que usan ai-mllc |
 | credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
 | credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |
@@ -50,7 +51,8 @@ docs/           decisiones y su porqué
 | collections | `checks/check_training_population.py` | Entrenamiento y evaluación solo con control desde el inicio del modelo; autocura solo sin gestión | Antes de entrenar o reentrenar |
 | collections | `checks/check_control_group.py` | Control persistente, proporción por rating y tamaño suficiente para reentrenar | Al diseñar el piloto y en cada reentrenamiento |
 | collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
-| shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, revisión en dos niveles, cómo escribir skills, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
+| shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, revisión en dos niveles, diagnóstico con cadena de evidencia, cómo escribir skills, `AGENTS.md` para librerías, seguridad y revisión adversarial de skills |
+| toolkit | `scripts/lint_skills.py` | Catálogo de skills (frontmatter, enlaces) y referencias entre archivos: rutas que no existen y rutas absolutas | Antes de commitear cambios en skills o conocimiento | En cualquier proyecto con agentes |
 
 Los dominios se apilan: `credit-scoring` se apoya en `ml-foundations`, y `collections` en ambos. Cada archivo de un dominio específico empieza diciendo qué archivo general aplica.
 
@@ -74,7 +76,7 @@ Los hooks no se instalan solos: copiar el bloque que corresponda de `adapters/cl
 python3 -m unittest discover -s tests
 ```
 
-Cada chequeo tiene al menos un caso que pasa y uno que falla, con datos sintéticos generados dentro del test. Solo usan la biblioteca estándar, como los chequeos. Un chequeo nuevo entra con sus tests.
+Cada chequeo tiene al menos un caso que pasa y uno que falla, con datos sintéticos generados dentro del test. `tests/test_toolkit.py` corre además `scripts/lint_skills.py` sobre el repo, así una referencia rota hace fallar los tests. Solo usan la biblioteca estándar, como los chequeos. Un chequeo nuevo entra con sus tests.
 
 ## Uso en un proyecto
 

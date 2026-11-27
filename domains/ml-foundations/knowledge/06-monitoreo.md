@@ -88,6 +88,8 @@ Reglas:
 
 Una mejora mínima es ruido: reemplazar un modelo tiene costos (recalibrar, comunicar, monitorear).
 
+`checks/promotion.py` aplica esta regla sobre la cohorte, con AUC como métrica de orden y el error de calibración por deciles; el margen, la tolerancia y el filtro del grupo de control se pasan por parámetro y se dejan escritos en la spec.
+
 ## Reentrenamiento automático
 
 - Ningún reentrenamiento automático publica un modelo sin pasar por la regla de promoción.
