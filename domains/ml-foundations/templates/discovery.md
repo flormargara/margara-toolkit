@@ -1,6 +1,6 @@
 # Discovery — [proyecto]
 
-Se completa con quien pide el modelo **antes del problem framing** (ver `knowledge/00-flujo.md`). Vive en el proyecto como `DISCOVERY_LOG.md`. Cada respuesta lleva su estado: explícita, candidata, confirmada, desconocida o contradicha.
+Se completa con quien pide el modelo **antes del problem framing** (ver `knowledge/00-flujo.md`). Vive en el proyecto como `DISCOVERY_LOG.md`. En ai-mllc la conduce `/mllc-discovery`, que además redacta el PRD para el intake. Cada respuesta lleva su estado: explícita, candidata, confirmada, desconocida o contradicha.
 
 | Campo | Valor |
 |---|---|

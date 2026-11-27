@@ -68,6 +68,7 @@ Una regla `active` y bloqueante con `no_cumple` o `evidencia_insuficiente` manti
 
 | Etapa de ai-mllc | Archivos del toolkit |
 |---|---|
+| `/mllc-discovery` (opcional, antes del intake; no es una etapa) | `templates/discovery.md`: la skill `discover-initiative` la usa si el proyecto tiene el toolkit, y deja `DISCOVERY_LOG.md` y un borrador del PRD |
 | `intake` | `00-flujo.md` (¿hace falta ML?, problem framing, uso y respaldo) |
 | `understand` | `08-trazabilidad.md`, `02-leakage.md` (observación vs. afirmación) |
 | `observe` | `01-universo-particiones.md` |
