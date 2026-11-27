@@ -22,7 +22,7 @@ Si el score decide aumentos o reducciones de límite, la acción cambia el desem
 ## Recalibración en crédito
 
 - Cambios de ciclo económico o de política mueven el nivel de mora sin cambiar el orden: recalibrar la PD o los cortes de rating antes que reentrenar.
-- Comparar champion, recalibrado y challenger con el **error de calibración por rating** además de Gini y KS.
+- Comparar champion, recalibrado y challenger con el **error de calibración por rating** además de Gini y KS. Si la spec fija KS como métrica principal, `promotion.py --metric ks --secondary-tolerance <tol>` decide por KS sin dejar caer el Gini.
 
 ## Revisión periódica
 

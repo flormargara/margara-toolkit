@@ -90,7 +90,7 @@ Reglas:
 
 Una mejora mínima es ruido: reemplazar un modelo tiene costos (recalibrar, comunicar, monitorear).
 
-`checks/promotion.py` aplica esta regla sobre la cohorte, con AUC como métrica de orden y el error de calibración por deciles; el margen, la tolerancia y el filtro del grupo de control se pasan por parámetro y se dejan escritos en la spec.
+`checks/promotion.py` aplica esta regla sobre la cohorte, con AUC (por defecto) o KS como métrica de orden (`--metric`) y el error de calibración por deciles. Reporta siempre AUC, Gini y KS; con `--secondary-tolerance` la métrica que no es principal tampoco puede empeorar más que ese valor. El margen, las tolerancias y el filtro del grupo de control se pasan por parámetro y se dejan escritos en la spec.
 
 ## Reentrenamiento automático
 

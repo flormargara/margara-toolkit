@@ -266,6 +266,60 @@ class PromotionTest(CheckTest):
         r = run(PROMOTION, self.cohort(), "--champion", "v3", "--challenger", "v9")
         self.assertFails(r, "faltan columnas: v9", code=2)
 
+    def test_ks_calculado(self):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("promotion", PROMOTION)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        self.assertEqual(mod.ks([0, 0, 1, 1], [0.1, 0.2, 0.3, 0.4]), 1.0)
+        self.assertEqual(mod.ks([0, 1, 0, 1], [0.5] * 4), 0.0)
+        self.assertEqual(mod.ks([0, 1, 1, 0], [0.1, 0.2, 0.3, 0.4]), 0.5)
+
+    def test_ks_challenger_claramente_mejor(self):
+        out = self.tmp / "d.json"
+        r = self.promote(self.cohort(), "--metric", "ks", "--json", out)
+        self.assertPasses(r)
+        self.assertIn("métrica principal: KS", r.stdout)
+        self.assertIn("DECISIÓN: challenger — mejora el KS", r.stdout)
+        data = json.loads(out.read_text(encoding="utf-8"))
+        self.assertEqual(data["metric"], "ks")
+        self.assertGreater(data["diff"], 0)
+        self.assertEqual(set(data["metrics"]["v4"]), {"auc", "gini", "ks", "cal"})
+
+    def test_ks_dentro_del_ruido_se_queda_el_champion(self):
+        r = self.promote(self.cohort(champion_noise=0.5, challenger_noise=0.5), "--metric", "ks")
+        self.assertPasses(r)
+        self.assertIn("DECISIÓN: champion", r.stdout)
+
+    def split_cohort(self, n=3000, seed=7, cut=0.6, width=0.4):
+        """El challenger separa perfecto alrededor de un corte y desordena cada lado:
+        sube el KS y baja el AUC respecto de un champion con ruido moderado."""
+        import math
+        rng = random.Random(seed)
+        sig = lambda v: 1 / (1 + math.exp(-(1.5 * v - 2)))  # noqa: E731
+        rows = []
+        for i in range(n):
+            z = rng.gauss(0, 1)
+            y = 1 if rng.random() < sig(z) else 0
+            champ = sig(z + rng.gauss(0, 0.6))
+            chall = sig(cut + width * rng.random() if z > cut else cut - width * rng.random())
+            rows.append([i, y, f"{champ:.5f}", f"{chall:.5f}"])
+        return self.csv("s.csv", ["id", "target", "v3", "v4"], rows)
+
+    def test_la_metrica_principal_decide(self):
+        path = self.split_cohort()
+        by_ks = self.promote(path, "--metric", "ks", "--cal-tolerance", "1")
+        self.assertIn("DECISIÓN: challenger", by_ks.stdout)
+        by_auc = self.promote(path, "--metric", "auc", "--cal-tolerance", "1")
+        self.assertIn("DECISIÓN: champion", by_auc.stdout)
+
+    def test_ks_principal_con_auc_secundario_que_empeora(self):
+        r = self.promote(self.split_cohort(), "--metric", "ks", "--cal-tolerance", "1",
+                         "--secondary-tolerance", "0.005")
+        self.assertPasses(r)
+        self.assertIn("empeora el AUC más que la tolerancia", r.stdout)
+        self.assertIn("DECISIÓN: champion", r.stdout)
+
 
 class InputsTest(CheckTest):
     CONTRACT = {"tables": {
