@@ -2,7 +2,7 @@
 
 ## Spec antes de modelar
 
-Antes del primer experimento, dejar escrito y confirmado con quien usa el modelo:
+Antes del primer experimento, dejar escrito y confirmado con quien usa el modelo (`templates/modeling-spec.md`):
 
 1. Objetivo de negocio en una oración (qué decisión apoya).
 2. Tipo de problema: clasificación binaria o multiclase, regresión, ranking, series de tiempo.

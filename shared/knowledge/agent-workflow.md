@@ -12,7 +12,7 @@ El agente no recuerda entre sesiones; el repositorio sí. Cada etapa deja un arc
 | `DISCOVERY_LOG.md` | Hallazgos del EDA y de las fuentes de datos |
 | `UNIVERSE_LOG.md` | Target, grano, horizonte, esquema de partición y veredicto de integridad |
 | `FEATURE_CATALOG.md` | Variables con su diseño, fuente, disponibilidad y estado (aprobada / descartada y por qué) |
-| `MODELING_SPEC.md` | Objetivo, métrica principal, criterio de "suficientemente bueno", restricciones y esquema de validación |
+| `MODELING_SPEC.md` | Objetivo, métrica principal, criterio de "suficientemente bueno", restricciones y esquema de validación (`ml-foundations/templates/modeling-spec.md`) |
 | `EXPERIMENTS_LOG.md` | Una fila por experimento: qué cambió, resultado, veredicto |
 
 Reglas:
@@ -76,6 +76,32 @@ En target, métrica principal, umbral de "suficientemente bueno" y restricciones
 ## El código manda sobre la documentación
 
 Cuando la documentación y el código se contradicen, el agente sigue el código y avisa la contradicción. La documentación desactualizada se corrige en el mismo cambio.
+
+Para que la contradicción se pueda detectar antes de leer todo, cada documento que describe código lleva un ancla con el commit contra el que se revisó (`ml-foundations/knowledge/09-documentacion.md`, "Ancla entre documentación y código").
+
+## Revisión en dos niveles
+
+Una revisión de código, de un notebook o de un entregable se divide en dos pasadas con salidas distintas:
+
+| Nivel | Qué reporta | Cómo |
+|---|---|---|
+| **Estricto** | Solo lo que bloquea: rompe una regla bloqueante, invalida un resultado o un despliegue | Cada hallazgo con evidencia `archivo:línea` (o tabla y celda) y la regla que rompe. Sin evidencia no es hallazgo |
+| **Sugerencias** | Lo que mejoraría pero no bloquea: legibilidad, simplificación, una práctica recomendada | Agrupadas y breves; nunca se presentan como bloqueantes |
+
+- Ninguno de los dos lista lo que está bien: un resumen de lo que pasa diluye lo que no pasa.
+- Si el nivel estricto no encuentra nada, lo dice en una línea.
+- Mezclarlos hace que quien recibe la revisión no sepa qué tiene que arreglar antes de seguir.
+
+## Escribir skills
+
+Una skill aporta **metodología**: qué hacer, en qué orden y con qué criterio. El **contorno** lo pone el entorno donde corre: dónde escribir los archivos, cómo registrar el avance, cuándo cerrar una etapa y quién aprueba. Una skill que fija rutas o el flujo de aprobación no se puede usar en otra herramienta ni en otro proyecto.
+
+- La `description` es lo que la herramienta lee para decidir cuándo activarla: dice qué hace y cuándo usarla, con las palabras con las que alguien lo pediría y en el idioma en que se piden las tareas (en este toolkit, español). Nombra las skills vecinas cuando el límite entre ellas no es obvio.
+- El cuerpo es un índice corto que lleva a los archivos de conocimiento; no copia su contenido.
+- Sin rutas absolutas de una máquina: rutas relativas a la skill o al repositorio.
+- Sin links rotos ni referencias a archivos que no existen.
+- Los chequeos se nombran con el comando exacto para correrlos.
+- Una skill que ejecuta queries, escribe archivos o guarda memoria pasa por la revisión de seguridad de abajo.
 
 ## `AGENTS.md` para librerías y repositorios compartidos
 

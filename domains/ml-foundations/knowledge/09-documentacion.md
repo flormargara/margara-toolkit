@@ -39,6 +39,43 @@ La documentación desactualizada es peor que la ausente: quien la lee, persona o
 - Cuando el código y la documentación se contradicen, manda el código y se corrige la documentación en el mismo cambio.
 - Para librerías y repositorios que van a tocar agentes, mantener un `AGENTS.md` con invariantes, trampas conocidas y qué no tocar sin coordinar (ver `shared/knowledge/agent-workflow.md`).
 
+### Ancla entre documentación y código
+
+Cada documento que describe código (ficha del modelo, `AGENTS.md`, contrato del dataset) dice contra qué versión de ese código se revisó por última vez:
+
+```markdown
+<!-- doc-anchor: repo=<repo> rama=<rama> commit=<sha corto> revisado=<AAAA-MM-DD> -->
+```
+
+- Se actualiza solo después de releer el documento contra el código, no al commitear cualquier cambio.
+- Si el commit del ancla ya no es el último que tocó el código descripto, el documento está pendiente de revisión: `git log <commit>..HEAD -- <rutas>` muestra qué cambió desde entonces.
+- Un agente que lee un documento con el ancla vieja lo trata como posiblemente desactualizado y lo dice antes de apoyarse en él.
+
+## Estándar de SQL
+
+Las queries de universo, features y dataset son parte del modelo y se leen tanto como el código:
+
+- **Encabezado** con el objetivo en una línea, el grano ("una fila por cliente y fecha de corte"), autor y fecha.
+- **Cada filtro que descarta datos lleva un comentario** con el motivo. Un filtro sin explicar es el primer sospechoso cuando no cierran los conteos.
+- Fechas literales en formato ISO (`'2026-01-31'`) y zona horaria explícita cuando la columna la tiene.
+- `CAST` explícito de los identificadores en cada join: un join entre texto y número puede perder filas sin error.
+- CTEs con nombre que dice qué contienen, en lugar de subqueries anidadas.
+- Fechas de corte y períodos como parámetros, nunca escritos en el cuerpo (ver "Los valores de ejemplo no son parámetros" en `03-features.md`).
+- Sampling con hash del identificador, no con una función aleatoria (`01-universo-particiones.md`).
+
+```sql
+-- Objetivo: universo de originación con su target a 6 meses
+-- Grano: una fila por solicitud
+-- Autor y fecha: <nombre>, 2026-11-26
+WITH solicitudes AS (
+    SELECT CAST(id_solicitud AS VARCHAR) AS id_solicitud, fecha_solicitud
+    FROM origen.solicitudes
+    WHERE fecha_solicitud BETWEEN :inicio AND :fin
+      AND canal <> 'prueba'  -- solicitudes de prueba del canal digital, no son clientes
+)
+SELECT ...
+```
+
 ## Buenas prácticas de escritura
 
 - Escribir para tres lectores: quien mantiene el modelo (metodología), quien lo usa (impacto y umbral) y quien lo audita (trazabilidad).

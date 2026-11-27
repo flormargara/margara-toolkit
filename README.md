@@ -38,7 +38,7 @@ docs/           decisiones y su porqué
 | ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
 | ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
 | ml-foundations | `checks/check_feature_names.py` | Nombres de features contra el estándar `FUENTE_DOMINIO_OPERACION_DESCRIPCION_VENTANA`; devuelve el tipo de cada una por su operación | Al cerrar la lista de features |
-| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; backlog y handoff de features, contrato del dataset, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
+| ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; backlog y handoff de features, contrato del dataset, spec del modelado, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |
 | adapters | `mllc/` | Genera el catálogo de golden rules de ai-mllc desde los dominios del toolkit (`compose.py`) y explica cómo usar las skills del toolkit como soporte | En proyectos que usan ai-mllc |
 | credit-scoring | `knowledge/` | Lo específico de scores de riesgo: default y roll rate, ventana de desempeño, WoE/IV, PD y puntos, punto de corte, reject inference, ratings, equidad, bandas de prueba y límites, trazabilidad evaluación → desempeño | Al construir o monitorear un score |
 | credit-scoring | `checks/forbidden_columns.example.txt` | Patrones de leakage de crédito y cobranzas | Al armar el `forbidden_columns.txt` de un proyecto de crédito |
@@ -50,7 +50,7 @@ docs/           decisiones y su porqué
 | collections | `checks/check_training_population.py` | Entrenamiento y evaluación solo con control desde el inicio del modelo; autocura solo sin gestión | Antes de entrenar o reentrenar |
 | collections | `checks/check_control_group.py` | Control persistente, proporción por rating y tamaño suficiente para reentrenar | Al diseñar el piloto y en cada reentrenamiento |
 | collections | `templates/problem-framing.md` | Problem framing para acordar con cobranzas | Al empezar un modelo de cobranzas |
-| shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
+| shared | `knowledge/agent-workflow.md` | Memoria del proyecto en archivos, criterios de cierre, revisión en dos niveles, cómo escribir skills, `AGENTS.md` para librerías, seguridad de skills | En cualquier proyecto con agentes |
 
 Los dominios se apilan: `credit-scoring` se apoya en `ml-foundations`, y `collections` en ambos. Cada archivo de un dominio específico empieza diciendo qué archivo general aplica.
 

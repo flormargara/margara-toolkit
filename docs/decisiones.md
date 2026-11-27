@@ -2,6 +2,16 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-26 — Prioridades M del relevamiento que eran texto
+
+**Decisión:** sumar `templates/modeling-spec.md`, el ancla entre documentación y código y el estándar de SQL en `09-documentacion.md`, y en `shared/knowledge/agent-workflow.md` la revisión en dos niveles y cómo escribir skills.
+
+**Por qué:** la spec se nombraba como `MODELING_SPEC.md` en los archivos de memoria del proyecto, pero no tenía plantilla. El ancla vuelve detectable la documentación desactualizada sin releerla entera: el commit revisado se compara con el último que tocó el código.
+
+**Diferencia con el relevamiento:** proponía la `description` de las skills en inglés. Se descartó porque las del toolkit están en español, que es el idioma en que se piden las tareas; la regla quedó como "en el idioma en que se piden".
+
+**Pendiente de esa prioridad:** `check_inputs.py`, que se hace cuando un proyecto real tenga un contrato de tablas para probarlo.
+
 ## 2026-11-26 — Golden rules de crédito y cobranzas
 
 **Decisión:** sumar `golden-rules/credit-scoring.md` (20 reglas, prefijo `cr-`) y `golden-rules/collections.md` (13, `co-`). Se componen después de `ml-foundations` y solo agregan lo propio del dominio.

@@ -23,9 +23,9 @@ Seguir `ml-foundations/knowledge/00-flujo.md`. Al empezar una etapa, leer su arc
 | Monitoreo, referencia, gate de entradas, recalibrar vs. reentrenar, regla de promoción | `ml-foundations/knowledge/06-monitoreo.md` |
 | Grupo de control, ficha de impacto, pilotos | `ml-foundations/knowledge/07-experimentacion.md` |
 | Trazabilidad | `ml-foundations/knowledge/08-trazabilidad.md` |
-| Documentación, reproducibilidad y pasar a producción | `ml-foundations/knowledge/09-documentacion.md` |
+| Documentación, ancla con el código, estándar SQL, reproducibilidad y pasar a producción | `ml-foundations/knowledge/09-documentacion.md` |
 
-Para la forma de trabajar (archivos de memoria del proyecto, criterios de cierre, una pregunta a la vez), seguir `shared/agent-workflow.md`.
+Para la forma de trabajar (archivos de memoria del proyecto, criterios de cierre, una pregunta a la vez, revisión en dos niveles, cómo escribir skills), seguir `shared/agent-workflow.md`.
 
 ## Reglas que no se negocian
 
@@ -65,6 +65,7 @@ Están en `ml-foundations/checks/`. Correrlos antes de reportar métricas de un 
 Copiar al repositorio del proyecto (no editarlos acá):
 
 - En la etapa de features: `ml-foundations/templates/feature-handoff.md`.
+- Antes del primer experimento: `ml-foundations/templates/modeling-spec.md`.
 - Durante el modelado: `ml-foundations/templates/dataset-contract.md` y `ml-foundations/templates/leaderboard.md`.
 - Al cerrar el modelo: `ml-foundations/templates/model-card.md` y `ml-foundations/templates/checklist-validacion.md`.
 - Antes del despliegue: `ml-foundations/templates/ficha-impacto.md`.

@@ -1,5 +1,7 @@
 # Contrato del dataset — [proyecto] v[versión del dataset]
 
+<!-- doc-anchor: repo=<repo> rama=<rama> commit=<sha corto> revisado=<AAAA-MM-DD> -->
+
 | Campo | Valor |
 |---|---|
 | Versión del dataset | |

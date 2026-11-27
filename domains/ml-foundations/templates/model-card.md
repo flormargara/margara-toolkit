@@ -1,5 +1,7 @@
 # Ficha del modelo — [nombre] v[versión]
 
+<!-- doc-anchor: repo=<repo> rama=<rama> commit=<sha corto> revisado=<AAAA-MM-DD> -->
+
 | Campo | Valor |
 |---|---|
 | Dueño | |
