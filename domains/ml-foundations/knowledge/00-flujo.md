@@ -18,7 +18,7 @@ No avanzar a la etapa siguiente sin cerrar el punto de control de la actual: los
 | 7 | Población | Población de entrenamiento vs. de predicción comparada; sesgo de selección documentado | `05-poblacion-y-sesgo.md` |
 | 8 | Experimento e impacto | Grupo de control, ficha de impacto, piloto | `07-experimentacion.md` |
 | 9 | Monitoreo | Tres capas, referencia correcta, gate de entradas, umbrales, responsables, regla de promoción | `06-monitoreo.md` |
-| 10 | Documentación | Ficha del modelo y checklist completos; documentación verificada contra el código | `09-documentacion.md`, `templates/` |
+| 10 | Documentación y producción | Ficha del modelo y checklist completos; documentación verificada contra el código; set de entrenamiento guardado y contrato entre pasos verificado antes de desplegar | `09-documentacion.md`, `templates/` |
 
 ## ¿Hace falta ML?
 

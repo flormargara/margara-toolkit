@@ -72,7 +72,7 @@ Todo número de desempeño va con cuánto podría moverse: dispersión entre fol
 
 No usar accuracy con clases desbalanceadas.
 
-**Regresión:** MAE (robusta), RMSE (penaliza errores grandes), error por tramo del valor real y por segmento, histograma de predicción vs. real. Si el target es asimétrico (ingresos, montos), evaluar en escala logarítmica o por percentiles además de la escala original.
+**Regresión:** MAE (robusta), RMSE (penaliza errores grandes), error por tramo del valor real y por segmento, histograma de predicción vs. real. Si el target es asimétrico (ingresos, montos), evaluar en escala logarítmica o por percentiles además de la escala original. Si se entrenó con el target transformado, revertir la transformación antes de reportar métricas y guardar las predicciones en escala de negocio.
 
 ## Segmentación
 
