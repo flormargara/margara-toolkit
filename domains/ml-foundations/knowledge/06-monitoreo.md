@@ -54,6 +54,8 @@ Antes de cada corrida de inferencia o entrenamiento, una señal pasa / no pasa p
 
 Si no pasa, la corrida no publica predicciones (falla cerrada) y avisa. Una tabla rota puede producir que nadie reciba una oferta o que todos la reciban. Mantener un inventario de qué tablas consume cada modelo, con su esquema esperado y su criticidad, para saber qué vigilar primero.
 
+`checks/check_inputs.py` aplica el gate: el inventario es su contrato (JSON, una entrada por tabla con columnas y tipos, filas mínimas, caída máxima, antigüedad máxima y criticidad) y el estado observado sale de dos queries baratas, el esquema de `information_schema.columns` y las filas por partición. Sale con error si una tabla crítica no pasa, así el pipeline no publica.
+
 Detalles:
 
 - **Demora del ground truth:** dejar escrito cuánto tarda en llegar y programar el monitoreo de desempeño en consecuencia. Mientras no hay ground truth se monitorea solo drift, y se dice.

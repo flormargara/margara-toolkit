@@ -18,7 +18,7 @@ Discutir con el Data Scientist y registrar en el frame: qué decisión toma el s
 - mecanismo: atestacion
 - estado: active
 
-Antes de armar el universo, presentar la cobertura de cada salto de la cadena solicitud → consulta a burós → oferta → aceptación → desembolso → desempeño para el período candidato: qué porcentaje de registros se une con el salto siguiente y con qué clave. Si una parte relevante se pierde, decir cuánto se achica el universo usable y si queda sesgado (por ejemplo, solo algunos canales). Ver `12-trazabilidad.md`.
+Antes de armar el universo, presentar la cobertura de cada salto de la cadena solicitud → consulta a burós → oferta → aceptación → desembolso → desempeño para el período candidato: qué porcentaje de registros se une con el salto siguiente y con qué clave. Si una parte relevante se pierde, decir cuánto se achica el universo usable y si queda sesgado (por ejemplo, solo algunos canales). La evidencia es la salida de `python3 check_traceability.py --step pred=predicciones.csv --step res=resultados.csv --hop pred.<clave>=res.<clave> --period pred.<fecha> --segment pred.<segmento> --mature-until <período>`. Ver `12-trazabilidad.md`.
 
 ## cr-default-con-roll-rate (v1)
 

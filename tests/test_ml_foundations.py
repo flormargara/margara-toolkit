@@ -16,6 +16,8 @@ CONCENTRATION = script("ml-foundations", "check_concentration.py")
 PSI = script("ml-foundations", "psi.py")
 FEATURE_NAMES = script("ml-foundations", "check_feature_names.py")
 PROMOTION = script("ml-foundations", "promotion.py")
+INPUTS = script("ml-foundations", "check_inputs.py")
+TRACEABILITY = script("ml-foundations", "check_traceability.py")
 
 
 class TargetProfileTest(CheckTest):
@@ -263,6 +265,102 @@ class PromotionTest(CheckTest):
     def test_columna_inexistente(self):
         r = run(PROMOTION, self.cohort(), "--champion", "v3", "--challenger", "v9")
         self.assertFails(r, "faltan columnas: v9", code=2)
+
+
+class InputsTest(CheckTest):
+    CONTRACT = {"tables": {
+        "cartera.saldos": {"columns": {"id_cliente": "bigint", "saldo": "decimal|double", "fecha": "date"},
+                           "min_rows": 1000, "max_drop": 0.30, "max_staleness_days": 2},
+        "aux.campanias": {"columns": {"id": "int"}, "critical": False, "max_staleness_days": 7},
+    }}
+
+    def gate(self, schema=None, volumes=None, contract=None, run_date="2026-11-27"):
+        schema = schema or [["cartera.saldos", "id_cliente", "BIGINT"], ["cartera.saldos", "saldo", "decimal(18,2)"],
+                            ["cartera.saldos", "fecha", "date"], ["aux.campanias", "id", "int"]]
+        volumes = volumes or [["cartera.saldos", "2026-11-25", 50000], ["cartera.saldos", "2026-11-26", 51000],
+                              ["aux.campanias", "2026-11-26", 40], ["aux.campanias", "2026-11-25", 38]]
+        c = self.text("contrato.json", json.dumps(contract or self.CONTRACT))
+        s = self.csv("columnas.csv", ["table", "column", "type"], schema)
+        v = self.csv("volumenes.csv", ["table", "partition", "rows"], volumes)
+        return run(INPUTS, "--contract", c, "--schema", s, "--volumes", v, "--run-date", run_date)
+
+    def test_entradas_sanas(self):
+        r = self.gate()
+        self.assertPasses(r)
+        self.assertIn("VEREDICTO: pasa", r.stdout)
+
+    def test_columna_faltante_y_tipo_distinto(self):
+        r = self.gate(schema=[["cartera.saldos", "id_cliente", "varchar(20)"], ["cartera.saldos", "fecha", "date"],
+                              ["cartera.saldos", "nueva", "int"], ["aux.campanias", "id", "int"]])
+        self.assertFails(r, "faltan columnas: saldo", "id_cliente es varchar(20), se esperaba bigint",
+                         "columnas que el contrato no conoce: nueva", "no publicar predicciones")
+
+    def test_caida_de_volumen(self):
+        r = self.gate(volumes=[["cartera.saldos", "2026-11-25", 50000], ["cartera.saldos", "2026-11-26", 20000],
+                               ["aux.campanias", "2026-11-26", 40]])
+        self.assertFails(r, "volumen cae 60%")
+
+    def test_particion_vieja(self):
+        self.assertFails(self.gate(run_date="2026-12-05"), "tiene 9 días (máximo 2)")
+
+    def test_tabla_no_critica_solo_advierte(self):
+        r = self.gate(volumes=[["cartera.saldos", "2026-11-25", 50000], ["cartera.saldos", "2026-11-26", 51000],
+                               ["aux.campanias", "2026-11-10", 40]])
+        self.assertPasses(r)
+        self.assertIn("WARN  última partición 2026-11-10", r.stdout)
+
+    def test_tabla_inexistente(self):
+        contract = {"tables": {"otra.tabla": {"columns": {"id": "int"}}}}
+        self.assertFails(self.gate(contract=contract), "no existe en el esquema observado")
+
+
+class TraceabilityTest(CheckTest):
+    def chain(self, lost_in="", fmt=False, n=400):
+        """predicción → decisión → resultado; lost_in = canal cuyos resultados no se registran."""
+        pred = [[f"P{i}", f"2026-0{1 + i % 3}-15", "web" if i % 2 else "sucursal"] for i in range(n)]
+        dec = [[f"P{i}", f"D{i}"] for i in range(n)]
+        res = [[f"d{i}" if fmt and i % 10 == 0 else f"D{i}", i % 7 == 0] for i in range(n)
+               if not (lost_in and pred[i][2] == lost_in)]
+        return (self.csv("pred.csv", ["id_prediccion", "fecha", "canal"], pred),
+                self.csv("dec.csv", ["id_prediccion", "id_decision"], dec),
+                self.csv("res.csv", ["id_decision", "malo"], res))
+
+    def trace(self, files, *extra):
+        pred, dec, res = files
+        return run(TRACEABILITY, "--step", f"pred={pred}", "--step", f"dec={dec}", "--step", f"res={res}",
+                   "--hop", "pred.id_prediccion=dec.id_prediccion", "--hop", "dec.id_decision=res.id_decision",
+                   "--period", "pred.fecha", "--segment", "pred.canal", "--min-rows", "20", *extra)
+
+    def test_cadena_completa(self):
+        out = self.tmp / "cobertura.csv"
+        r = self.trace(self.chain(), "--out", out)
+        self.assertPasses(r)
+        self.assertIn("acumulada desde pred: 400/400 = 100.0%", r.stdout)
+        self.assertIn("dec → res,2026-01,web", out.read_text(encoding="utf-8"))
+
+    def test_segmento_sin_resultados(self):
+        r = self.trace(self.chain(lost_in="web"))
+        self.assertFails(r, "dec → res: cobertura 50.0%", "segmento web: cobertura 0.0%")
+
+    def test_periodo_inmaduro_no_se_evalua(self):
+        pred, dec, res = self.chain()
+        rows = [l for l in res.read_text(encoding="utf-8").splitlines()]
+        keep = {f"P{i}" for i in range(400) if 1 + i % 3 != 3}
+        dec_ok = {f"D{i}" for i in range(400) if f"P{i}" in keep}
+        res.write_text("\n".join([rows[0]] + [l for l in rows[1:] if l.split(",")[0] in dec_ok]) + "\n", encoding="utf-8")
+        self.assertFails(self.trace((pred, dec, res)), "período 2026-03")
+        r = self.trace((pred, dec, res), "--mature-until", "2026-02")
+        self.assertPasses(r)
+        self.assertIn("inmaduro", r.stdout)
+
+    def test_clave_con_otro_formato(self):
+        self.assertFails(self.trace(self.chain(fmt=True)), "40 claves sin par lo encontrarían normalizando")
+
+    def test_saltos_fuera_de_cadena(self):
+        pred, dec, res = self.chain()
+        r = run(TRACEABILITY, "--step", f"pred={pred}", "--step", f"dec={dec}", "--step", f"res={res}",
+                "--hop", "pred.id_prediccion=dec.id_prediccion", "--hop", "pred.id_prediccion=res.id_decision")
+        self.assertFails(r, "tiene que salir de 'dec'", code=2)
 
 
 if __name__ == "__main__":

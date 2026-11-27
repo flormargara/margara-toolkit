@@ -31,5 +31,4 @@ Después de cada edición de código, escanea el archivo editado en busca de col
 
 - Hook que bloquee el entrenamiento si `check_universe.py` no pasó: depende de cómo se lance el entrenamiento en cada proyecto.
 - Hook de cierre que exija la ficha del modelo actualizada.
-- `check_traceability.py`: porcentaje de registros que sobreviven cada join de la cadena predicción → resultado. Depende de las tablas de cada organización.
 - Subagente revisor de modelos: se agrega si el uso muestra que hace falta.

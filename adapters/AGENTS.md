@@ -25,7 +25,7 @@ Seguir `shared/knowledge/agent-workflow.md`: archivos de memoria del proyecto (`
    - Si la acción cambia el resultado, entrenar y evaluar con el grupo de control.
 3. Correr en `domains/ml-foundations/checks/`: `target_profile.py` antes de particionar; y antes de reportar métricas de un modelo nuevo,
    `check_universe.py`, `check_leakage.py --features <lista>`, `check_dataset.py` y `check_concentration.py`.
-   Al cerrar la lista de features, `check_feature_names.py`; en monitoreo, `psi.py`; y antes de reemplazar el modelo vigente, `promotion.py`.
+   Antes de armar el universo, `check_traceability.py`; al cerrar la lista de features, `check_feature_names.py`; antes de cada corrida productiva, `check_inputs.py`; en monitoreo, `psi.py`; y antes de reemplazar el modelo vigente, `promotion.py`.
 4. Al cerrar el modelo, completar las plantillas de `domains/ml-foundations/templates/` dentro del proyecto.
 5. Si una regla choca con lo pedido, decirlo explícitamente.
 

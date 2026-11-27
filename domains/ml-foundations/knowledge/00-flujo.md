@@ -8,7 +8,7 @@ No avanzar a la etapa siguiente sin cerrar el punto de control de la actual: los
 
 | # | Etapa | Punto de control (debe quedar escrito) | Detalle |
 |---|---|---|---|
-| 0 | Trazabilidad | Se puede reconstruir predicción → decisión → resultado para el período a usar | `08-trazabilidad.md` |
+| 0 | Trazabilidad | Se puede reconstruir predicción → decisión → resultado para el período a usar; `check_traceability.py` con la cobertura de cada salto | `08-trazabilidad.md` |
 | 1 | Problem framing | Hace falta ML; decisión, población, momento de la predicción, demora hasta la acción, costo de cada error, uso y fallback, forma de medir el impacto | Abajo |
 | 2 | Universo y particiones | Target perfilado por período (`target_profile.py`), grano, horizonte, esquema temporal; `check_universe.py` en verde | `01-universo-particiones.md` |
 | 3 | Leakage | Variables con su fecha de disponibilidad; `check_leakage.py` en verde | `02-leakage.md` |
@@ -17,7 +17,7 @@ No avanzar a la etapa siguiente sin cerrar el punto de control de la actual: los
 | 6 | Modelado | Spec, baselines, leaderboard con ablaciones, búsqueda dentro de train, incertidumbre de cada métrica, calibración; `check_concentration.py` en verde | `04-modelado.md` |
 | 7 | Población | Población de entrenamiento vs. de predicción comparada; sesgo de selección documentado | `05-poblacion-y-sesgo.md` |
 | 8 | Experimento e impacto | Grupo de control, ficha de impacto, piloto | `07-experimentacion.md` |
-| 9 | Monitoreo | Tres capas, referencia correcta, gate de entradas, umbrales, responsables, regla de promoción | `06-monitoreo.md` |
+| 9 | Monitoreo | Tres capas, referencia correcta, gate de entradas (`check_inputs.py`), umbrales, responsables, regla de promoción (`promotion.py`) | `06-monitoreo.md` |
 | 10 | Documentación y producción | Ficha del modelo y checklist completos; documentación verificada contra el código; set de entrenamiento guardado y contrato entre pasos verificado antes de desplegar | `09-documentacion.md`, `templates/` |
 
 ## ¿Hace falta ML?

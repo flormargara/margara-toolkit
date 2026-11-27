@@ -59,6 +59,8 @@ Están en `ml-foundations/checks/`. Correrlos antes de reportar métricas de un 
 | Concentración de importancia | `python3 ml-foundations/checks/check_concentration.py importancias.csv` |
 | Nombres de features | `python3 ml-foundations/checks/check_feature_names.py lista.txt` (o el CSV del dataset con `--ignore` para claves y target) |
 | Estabilidad | `python3 ml-foundations/checks/psi.py ref.csv act.csv --column score`, o `--all-numeric` para CSI |
+| Cobertura de la trazabilidad | `python3 ml-foundations/checks/check_traceability.py --step pred=predicciones.csv --step res=resultados.csv --hop pred.<clave>=res.<clave> --period pred.<fecha> --segment pred.<segmento> --mature-until <período>`, antes de armar el universo |
+| Gate de entradas | `python3 ml-foundations/checks/check_inputs.py --contract contrato.json --schema columnas.csv --volumes volumenes.csv`, antes de cada corrida; con error, no publicar |
 | Promoción | `python3 ml-foundations/checks/promotion.py cohorte.csv --champion <col> --challenger <col> --recalibrated <col>` (con `--where grupo=control` si la acción cambia el resultado). Decide, no falla: la decisión se reporta tal cual |
 
 ## Entregables

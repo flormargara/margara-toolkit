@@ -261,7 +261,7 @@ El plan de monitoreo compara el drift contra los artefactos del modelo vigente y
 - mecanismo: discusion
 - estado: active
 
-Acordar con el Data Scientist el control de cada tabla de entrada antes de cada corrida (esquema, volumen, frescura), qué pasa si falla (por defecto no se publican predicciones) y quién recibe el aviso. Registrarlo en el plan de despliegue.
+Acordar con el Data Scientist el control de cada tabla de entrada antes de cada corrida (esquema, volumen, frescura), qué pasa si falla (por defecto no se publican predicciones) y quién recibe el aviso. Registrarlo en el plan de despliegue. El control puede ser `python3 check_inputs.py --contract contrato.json --schema columnas.csv --volumes volumenes.csv` como primer paso del pipeline, con el contrato versionado junto al código.
 
 ## ml-camino-de-reversion (v1)
 

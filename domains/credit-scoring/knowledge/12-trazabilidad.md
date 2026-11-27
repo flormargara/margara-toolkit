@@ -30,4 +30,4 @@ Cada salto necesita una **clave única y estable** que esté en ambos lados. Pro
 
 ## Consecuencia práctica para un proyecto de scoring
 
-Antes de construir un universo, medir la cobertura de cada salto para el período candidato. Si una parte relevante de las evaluaciones no se puede unir con su desempeño, el universo usable puede ser mucho más chico que el aparente, y además sesgado (por ejemplo, solo ciertos canales quedan trazados). Documentarlo en la ficha del modelo como limitación.
+Antes de construir un universo, medir la cobertura de cada salto para el período candidato (`ml-foundations/checks/check_traceability.py`, con un `--step` por tabla de la cadena y el canal como `--segment`). Si una parte relevante de las evaluaciones no se puede unir con su desempeño, el universo usable puede ser mucho más chico que el aparente, y además sesgado (por ejemplo, solo ciertos canales quedan trazados). Documentarlo en la ficha del modelo como limitación.

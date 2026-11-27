@@ -37,6 +37,8 @@ docs/           decisiones y su porqué
 | ml-foundations | `checks/check_leakage.py` | Detecta columnas prohibidas en código o listas de features (la lista de patrones la pone cada dominio) | Hook después de editar código, y antes de reportar métricas |
 | ml-foundations | `checks/check_concentration.py` | Concentración de la importancia (top-1, top-3, número efectivo de variables) | Al aceptar un modelo |
 | ml-foundations | `checks/psi.py` | PSI/CSI entre dos muestras | Validación y monitoreo |
+| ml-foundations | `checks/check_traceability.py` | Cobertura de cada salto de la cadena predicción → resultado, por período y segmento: claves vacías, repetidas o con otro formato | Antes de armar el universo y como indicador en producción |
+| ml-foundations | `checks/check_inputs.py` | Gate de entradas contra un contrato por tabla: esquema y tipos, volumen contra la partición anterior, frescura | Antes de cada corrida; con error, no se publica |
 | ml-foundations | `checks/promotion.py` | Regla de promoción: champion, recalibrado o challenger, con margen mínimo, intervalo bootstrap pareado de la diferencia de AUC y error de calibración | Antes de reemplazar el modelo vigente |
 | ml-foundations | `checks/check_feature_names.py` | Nombres de features contra el estándar `FUENTE_DOMINIO_OPERACION_DESCRIPCION_VENTANA`; devuelve el tipo de cada una por su operación | Al cerrar la lista de features |
 | ml-foundations | `templates/` | Ficha del modelo y checklist de validación genéricas; discovery, backlog y handoff de features, contrato del dataset, spec del modelado, leaderboard y ficha de impacto | Durante el modelado, al cerrar el modelo y antes del despliegue |

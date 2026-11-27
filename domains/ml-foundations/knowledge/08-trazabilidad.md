@@ -42,6 +42,8 @@ Se documenta en la ficha del modelo ("Consumo y respaldo").
 
 Para cada salto, calcular qué porcentaje de registros encuentra su par en la tabla siguiente, por período y por segmento. Publicarlo como indicador de calidad con un umbral, y tratar una caída como un incidente.
 
+`checks/check_traceability.py` lo calcula desde un CSV por tabla de la cadena: cobertura de cada salto y acumulada desde el primero, por período y segmento, con `--out` para publicarla. Además avisa de claves vacías, de claves repetidas que multiplican filas y de claves que solo se unen normalizando el formato. Los períodos cuyo resultado todavía no llegó se excluyen con `--mature-until`.
+
 Ante un problema, documentar:
 
 - Período y volumen afectado.

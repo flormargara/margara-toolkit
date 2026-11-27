@@ -2,6 +2,18 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-27 — `check_inputs.py` y `check_traceability.py`
+
+**Decisión:** sumar los dos a `ml-foundations/checks/` antes de tenerlos probados en un proyecto real, a pedido de la usuaria. Cuando se usen con datos reales se ajustan los defaults.
+
+**`check_inputs.py` no se conecta a la base:** lee un contrato JSON por tabla y dos exports baratos, el esquema (`information_schema.columns`) y las filas por partición. Así sirve con cualquier motor y el chequeo no necesita credenciales. JSON y no YAML porque los chequeos usan solo la biblioteca estándar. Una tabla no crítica advierte en lugar de fallar, para que una tabla auxiliar no frene la corrida.
+
+**`check_traceability.py` mide desde el primer paso:** el período y el segmento salen de la primera tabla y la cobertura por celda se cuenta sobre los registros del primer paso que llegaron a cada salto. Así una caída en un salto intermedio se ve en el período y canal donde ocurre. Los saltos van en cadena; una cadena con ramas se mide con una corrida por rama.
+
+**Formato de clave como falla, no advertencia:** si una clave sin par lo encuentra al normalizar espacios, mayúsculas, ceros o decimales, el join está mal escrito y la cobertura medida es falsa. Las claves repetidas del lado destino solo advierten, porque una decisión puede tener varios resultados legítimos.
+
+**Reglas de ai-mllc:** `ml-gate-de-entradas` y `cr-trazabilidad-de-la-cadena` mantienen fuerza y mecanismo; solo nombran el comando como forma de cumplirlas, así que no cambian de versión.
+
 ## 2026-11-26 — Prioridades B del relevamiento
 
 **Decisión:** sumar `promotion.py` a `ml-foundations/checks/`, `scripts/lint_skills.py` con sus tests, la plantilla `discovery.md`, métricas de negocio por banda (07), cadena de consumo (08), estándar de Python y cambios después de producción (09), y en `shared/` el diagnóstico con cadena de evidencia y la revisión adversarial de skills por perfil de riesgo.
