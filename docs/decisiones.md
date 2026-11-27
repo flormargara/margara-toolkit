@@ -2,6 +2,14 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-27 — KS como métrica principal en `promotion.py`
+
+**Decisión:** `promotion.py` suma `--metric {auc,ks}` (por defecto `auc`, así no cambia ningún uso actual) y `--secondary-tolerance`. La métrica elegida es la que pasa por el margen mínimo y el bootstrap pareado; la otra se reporta siempre y, si se pasa la tolerancia, no puede empeorar más que eso. Así un proyecto cuya spec fija KS como principal y Gini como secundaria aplica la regla con el chequeo en lugar de compararla aparte.
+
+**Por qué una tolerancia y no exigir que mejoren las dos:** exigir mejoras simultáneas sin margen pasa o falla por azar (ver `06-monitoreo.md`); la secundaria funciona como guarda, igual que la calibración. KS y AUC pueden ir en direcciones opuestas: un modelo que separa mejor en un corte puede ordenar peor en las colas.
+
+**Reglas de ai-mllc:** `ml-regla-de-promocion` mantiene fuerza y mecanismo; solo nombra el flag, así que no cambia de versión.
+
 ## 2026-11-27 — `check_inputs.py` y `check_traceability.py`
 
 **Decisión:** sumar los dos a `ml-foundations/checks/` antes de tenerlos probados en un proyecto real, a pedido de la usuaria. Cuando se usen con datos reales se ajustan los defaults.

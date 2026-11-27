@@ -243,7 +243,7 @@ Si la acción guiada por el modelo cambia el resultado, el modelo se entrena y s
 - mecanismo: atestacion
 - estado: active
 
-Un modelo reemplaza al vigente solo si mejora la métrica principal por un margen mínimo acordado o con un intervalo bootstrap de la diferencia que excluye cero, y no empeora la calibración. Una mejora mayor que cero no alcanza. La evidencia es la salida de `python3 promotion.py <cohorte.csv> --champion <col> --challenger <col> --recalibrated <col>` sobre una cohorte madura que ninguno usó para entrenar. Ver `06-monitoreo.md`.
+Un modelo reemplaza al vigente solo si mejora la métrica principal por un margen mínimo acordado o con un intervalo bootstrap de la diferencia que excluye cero, y no empeora la calibración. Una mejora mayor que cero no alcanza. La evidencia es la salida de `python3 promotion.py <cohorte.csv> --champion <col> --challenger <col> --recalibrated <col> --metric <auc|ks>` (la métrica principal de la spec; con `--secondary-tolerance` si la secundaria no puede empeorar) sobre una cohorte madura que ninguno usó para entrenar. Ver `06-monitoreo.md`.
 
 ## ml-monitoreo-referido (v1)
 
