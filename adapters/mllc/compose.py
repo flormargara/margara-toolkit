@@ -16,6 +16,10 @@ Formato validado (el mismo que rechaza el núcleo): cada `## ` fuera de un bloqu
 código abre una regla `## <id> (v<n>)`; abajo, la lista con fuerza, etapa, mecanismo y
 estado, y después el enunciado en prosa. Un id y versión no se repiten entre dominios.
 
+Al componer, cada `python3 <chequeo>.py` de una regla pasa a la ruta completa del
+chequeo en este toolkit: ai-mllc le entrega al agente solo el enunciado de cada regla,
+así que la ruta tiene que estar ahí.
+
 ai-mllc trata el catálogo como dato del proyecto y nunca lo pisa; este script tampoco,
 salvo con --force.
 
@@ -31,6 +35,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 CATALOGS = HERE / "golden-rules"
+DOMAINS = HERE.parents[1] / "domains"
+COMMAND = re.compile(r"python3 ([A-Za-z0-9_]+\.py)")
 
 STAGES = ("intake", "understand", "observe", "features", "dataset", "model", "deploy")
 ALLOWED = {
@@ -60,6 +66,31 @@ def sections(text: str) -> tuple[list[str], list[tuple[str, list[str]]]]:
         else:
             preamble.append(line)
     return preamble, out
+
+
+def check_path(script: str) -> str | None:
+    """Ruta del chequeo en el toolkit, con ~ si está bajo el home, o None si no existe."""
+    matches = sorted(DOMAINS.glob(f"*/checks/{script}"))
+    if not matches:
+        return None
+    path = matches[0]
+    try:
+        return "~/" + path.relative_to(Path.home()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def with_check_paths(line: str, problems: list[str], where: str) -> str:
+    """Reemplaza `python3 <chequeo>.py` por la ruta completa, para que el agente lo encuentre."""
+
+    def repl(match: re.Match) -> str:
+        path = check_path(match.group(1))
+        if path is None:
+            problems.append(f"{where}: nombra {match.group(1)}, que no existe en domains/*/checks/")
+            return match.group(0)
+        return f"python3 {path}"
+
+    return COMMAND.sub(repl, line)
 
 
 def validate(name: str, text: str) -> tuple[list[tuple[str, int, dict]], list[str]]:
@@ -148,12 +179,17 @@ def main() -> int:
         "Volver a generarlo pisa las ediciones locales.",
         "",
     ]
-    for _, secs in bodies:
+    path_problems: list[str] = []
+    for d, secs in bodies:
         for heading, body in secs:
             lines.append(f"## {heading}")
-            lines.extend(body)
+            lines.extend(with_check_paths(line, path_problems, f"{d}: {heading}") for line in body)
             if lines[-1].strip():
                 lines.append("")
+    if path_problems:
+        for msg in path_problems:
+            print(f"FAIL {msg}", file=sys.stderr)
+        return 1
     text = "\n".join(lines).rstrip() + "\n"
 
     if args.out == "-":

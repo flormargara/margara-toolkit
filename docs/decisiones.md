@@ -2,6 +2,14 @@
 
 Registro breve de por qué el toolkit es como es. Una entrada por decisión, la más reciente arriba.
 
+## 2026-11-26 — Golden rules de crédito y cobranzas
+
+**Decisión:** sumar `golden-rules/credit-scoring.md` (20 reglas, prefijo `cr-`) y `golden-rules/collections.md` (13, `co-`). Se componen después de `ml-foundations` y solo agregan lo propio del dominio.
+
+**Por qué:** las reglas generales ya cubren particiones, leakage, baselines o grupo de control; repetirlas duplicaría evaluaciones. Las de dominio suman lo que no está en lo general: roll rate y componentes del target, WoE, PD y ratings, punto de corte del dueño del riesgo, entrenar solo con control y gestiones del episodio actual.
+
+**Cómo:** el binning WoE va en la etapa `model` y no en `features`, porque mira el target y en `features` rige la selección sin target. Las reglas que no siempre corresponden (PD como número, ratings, auditoría de equidad) dicen cuándo son `no_aplica`. `tests/test_mllc_catalogs.py` verifica que los comandos de las reglas existan con esos flags.
+
 ## 2026-11-25 — ai-mllc como repo propio, con adaptador para Claude Code
 
 **Decisión:** ai-mllc vive en `~/projects/ai-mllc`, separado del toolkit, importado desde la copia del repo del equipo. Ahí se sumó `adapters/claude/`. El toolkit conserva solo `adapters/mllc/` (catálogo de golden rules y `compose.py`).
@@ -44,7 +52,7 @@ Registro breve de por qué el toolkit es como es. Una entrada por decisión, la 
 
 **Cómo:** cada regla declara fuerza, etapa, mecanismo y estado. Las de mecanismo `check_determinista` nombran el script de `checks/` y su código de salida se traduce a cumple / no cumple. El catálogo absorbe las tres reglas de referencia que siembra ai-mllc. `compose.py` no pisa un catálogo existente sin `--force`, igual que ai-mllc. Se validó contra el parser real de ai-mllc (0.1.0a1).
 
-**Pendiente:** catálogos de `credit-scoring` y `collections`.
+**Catálogos de dominio:** ver la entrada del 2026-11-26.
 
 ## 2026-11-23 — Prioridades A del relevamiento de repos del equipo
 

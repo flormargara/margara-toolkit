@@ -8,16 +8,43 @@ ai-mllc (`~/projects/ai-mllc`, repo propio desde que el equipo que lo armó dej�
 | Qué es una buena práctica, con qué fuerza aplica y cómo se verifica | Este toolkit, a través del catálogo |
 | Contexto y restricciones del proyecto | La constitución local del proyecto |
 
+## Uso en un proyecto, de punta a punta
+
+Una sola vez por proyecto, desde su raíz (ejemplo de crédito; para cobranzas, sumar `collections` al compose y usar `collections-ml`):
+
+```bash
+source ~/projects/ai-mllc/.venv/bin/activate
+bash ~/projects/ai-mllc/adapters/claude/bootstrap.sh
+python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations credit-scoring --out .claude/mllc-golden-rules.md --force
+ln -s ~/.agents/skills/credit-scoring-ml .claude/skills/credit-scoring-ml
+```
+
+1. Completar `.claude/rules/mllc-constitution-local.md`: contexto, variables sensibles prohibidas, fuentes excluidas y acceso a datos.
+2. Crear `forbidden_columns.txt` en la raíz combinando `ml-foundations/checks/forbidden_columns.example.txt` con la lista del dominio.
+3. Sumar `credit-scoring-ml` a `support` de las etapas donde ayuda, con `/mllc-config` o con `mllc-core config set-binding`.
+4. Trabajar con `/mllc` y las etapas. Al cerrar cada etapa, el agente evalúa las reglas de esa etapa: corre el chequeo, presenta la evidencia o lo discute, y registra el resultado. Una regla bloqueante en `no_cumple` o `evidencia_insuficiente` deja la etapa abierta hasta que se resuelva.
+
+Para ajustar una regla a un proyecto, editarla en `.claude/mllc-golden-rules.md` (por ejemplo `estado: draft` para que no bloquee). Volver a componer pisa esas ediciones.
+
 ## Generar el catálogo
 
 ```bash
 python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations --out .claude/mllc-golden-rules.md
 ```
 
+Para un proyecto de crédito o de cobranzas, componer los dominios en orden (cada uno se apoya en los anteriores):
+
+```bash
+python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations credit-scoring --out .claude/mllc-golden-rules.md
+python3 ~/projects/margara-toolkit/adapters/mllc/compose.py ml-foundations credit-scoring collections --out .claude/mllc-golden-rules.md
+```
+
 - La carpeta es la de configuración de ai-mllc en el proyecto: `.claude/` en Claude Code (`.cursor/`, `.kiro/` o `.github/` en las otras herramientas).
 - Si el bootstrap de ai-mllc ya sembró un catálogo de referencia, reemplazarlo con `--force`. Sus tres reglas de referencia ya están incluidas en el catálogo del toolkit.
 - `--check` valida todos los catálogos sin escribir nada. El formato que valida es el mismo que exige el núcleo de ai-mllc.
-- Hoy hay catálogo para `ml-foundations`. Los de `credit-scoring` y `collections` se agregan como `golden-rules/<dominio>.md` y se componen en orden: `compose.py ml-foundations credit-scoring`.
+- Hay catálogo para `ml-foundations` (31 reglas, prefijo `ml-`), `credit-scoring` (20, `cr-`) y `collections` (13, `co-`). Los de dominio solo suman lo propio: no repiten las reglas generales.
+- En cobranzas, las reglas de crédito pensadas para originación (por ejemplo `cr-sesgo-de-seleccion`, `cr-punto-de-corte`) se evalúan como `no_aplica` cuando no corresponden.
+- `tests/test_mllc_catalogs.py` verifica el formato y que cada comando que nombra una regla use un chequeo y flags que existen.
 
 ## Cómo se evalúa cada regla
 
